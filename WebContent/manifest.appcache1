@@ -1,0 +1,21 @@
+CACHE MANIFEST  
+#VERSION 10.2  
+# 直接缓存的文件  
+CACHE:  
+
+ 
+  
+#需要在时间在线的文件  
+NETWORK:  
+css/mytheme.css
+css/jquery.mobile.icons-1.4.2.css  
+css/jquery.mobile.structure-1.4.2.css
+css/custom.css
+js/jquery-1.10.2.js
+js/jquery.validate.js
+js/jquery.mobile-1.4.2.js
+js/custom.js  
+WEB-INF/content/deal-index.jsp
+WEB-INF/content/innerpage/pop/login_pop.jsp
+# 替代方案  
+FALLBACK:
