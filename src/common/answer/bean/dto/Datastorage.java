@@ -2,7 +2,9 @@ package common.answer.bean.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Datastorage implements Serializable{
 
@@ -17,8 +19,8 @@ public class Datastorage implements Serializable{
     private BigDecimal fullup_cnt;
     double[] average_today_nday;
     double[] average_yesterday_nday;
-
-    public double[] getAverage_threedaysago_nday() {
+    
+	public double[] getAverage_threedaysago_nday() {
         return average_threedaysago_nday;
     }
 

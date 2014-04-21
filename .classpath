@@ -84,5 +84,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xstream-1.4.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xwork-core-2.3.16.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cglib-full-2.0.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

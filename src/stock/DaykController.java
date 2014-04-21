@@ -13,6 +13,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
+import stock.mmgridcommunicator.HazelCommunicator;
 import stock.thread.DayksearchThr;
 import stock.thread.ThreadListener;
 
@@ -22,7 +23,7 @@ import com.opensymphony.xwork2.Validateable;
 import com.opensymphony.xwork2.ValidationAwareSupport;
 
 @Results({ @Result(name = "success", type = "redirectAction", params = {
-		"actionName", "dayk" }) })
+		"actionName", "deal" }) })
 public class DaykController extends ValidationAwareSupport implements
 		ModelDriven<Object>, Validateable {
 
@@ -37,76 +38,60 @@ public class DaykController extends ValidationAwareSupport implements
 
 	private static final Log Logger = LogFactory.getLog(DaykController.class);
 
-
 	// GET /orders/1
 	@SuppressWarnings("unchecked")
-	public HttpHeaders show() throws Exception {
+	public HttpHeaders show() {
+		try {
+			// get xml and client info
+			Logger.info("in corelogic the id is " + id);
 
-		// get xml and client info
-		Logger.info("in corelogic the id is " + id);
+			JSONObject paramsInfo = JSONObject.fromObject(id);
+			// parameters
+			String tel = paramsInfo.getString("tel");
+			List<String> stocklist = new ArrayList<String>();
+			String datastatus;
 
-		JSONObject paramsInfo = JSONObject.fromObject(id);
+			datastatus = HazelCommunicator.setStockListForfutherDeal(
+					paramsInfo, tel, stocklist);
 
-		if (HazelCommunicator.datacopy.isEmpty()) {
-			HazelCommunicator.sychdataFromHazel(paramsInfo.getString("mmaddress").replace("&&", ".").replace("&", ":"),5);
-		}
-		Logger.info("data size is " + HazelCommunicator.datacopy.size());
-		IMap<String, List<String>> map_remote = (IMap<String, List<String>>) HazelCommunicator.map_remote;
+			if ("nodata".equals(datastatus)) {
+				return new DefaultHttpHeaders("nodata");
+			}
 
-		Logger.info("get cached data ");
-		// data management
-		List<String> stocklist = null;
+			String[] params = ((String) paramsInfo.get("dayk")).split(",");
+			int threadcount = (int) paramsInfo.get("threadcnt");
+			int[] paramsint = new int[params.length];
+			for (int i = 0; i < params.length; i++) {
+				paramsint[i] = Integer.parseInt(params[i]);
+			}
 
-		// parameters
-		String tel = paramsInfo.getString("tel");
+			List<String> resultlstAfterSearch = Collections
+					.synchronizedList(new ArrayList<String>());
 
-		// get data from memory,if it exists
-		List<String> resultls = (List<String>) map_remote.get(tel);
+			Logger.info("start");
 
-		Logger.info("user tel is " + tel);
-		// if searched result is empty 
-		if (resultls == null || resultls.size() == 0) {
-			resultls = new ArrayList<String>();
-			stocklist = (List<String>) HazelCommunicator.datacopy.get("stocklist");
-		} else {
-			// if exist,so search the data from memory,small range
-			stocklist = resultls;
-		}
-		if (stocklist == null || stocklist.size() == 0) {
-			// MemcachedUtil.tearDownAfterClass();
-			return new DefaultHttpHeaders("nodata");
-		}
-		
-		String[] params = ((String) paramsInfo.get("dayk")).split(",");
-		int threadcount =(int) paramsInfo.get("threadcnt");
-		int[] paramsint = new int[params.length];
-		for (int i = 0; i < params.length; i++) {
-			paramsint[i] = Integer.parseInt(params[i]);
-		}
+			ThreadListener.listenThreads(paramsint, resultlstAfterSearch,
+					stocklist, DayksearchThr.class, threadcount, null);
 
+			Logger.info("end");
 
-		List<String> resultlstAfterSearch = Collections
-				.synchronizedList(new ArrayList<String>());
+			Logger.info("caculating finished");
 
-		Logger.info("start");
-		
-		ThreadListener.listenThreads(paramsint, resultlstAfterSearch, stocklist, DayksearchThr.class, threadcount);
-		
-
-		Logger.info("end");
-
-		Logger.info("caculating finished");
-
-		if (resultlstAfterSearch.size() == 0) {
-			return new DefaultHttpHeaders("nodata");
-		} else {
-			map_remote.put(tel, resultlstAfterSearch);
-			return new DefaultHttpHeaders("done");
+			if (resultlstAfterSearch.size() == 0) {
+				
+				return new DefaultHttpHeaders("nodata");
+			} else {
+				((IMap<String, List<String>>) HazelCommunicator.map_remote)
+						.put(tel, resultlstAfterSearch);
+				return new DefaultHttpHeaders("done");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new DefaultHttpHeaders("error");
 		}
 
 	}
-
-	
 
 	// GET /orders
 	public HttpHeaders index() throws Exception {

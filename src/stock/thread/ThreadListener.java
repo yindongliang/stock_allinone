@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import stock.HazelCommunicator;
+import stock.mmgridcommunicator.HazelCommunicator;
 
 public class ThreadListener {
 	
 	
-	public static void listenThreads(int[] paramsint,List<String> resultlstAfterSearch,List<String> stocklist,Class<?> clazz,int threadcount) throws InstantiationException, IllegalAccessException{
+	public static void listenThreads(int[] paramsint,List<String> resultlstAfterSearch,List<String> stocklist,Class<?> clazz,int threadcount,Map<?,?> otherinfo) throws InstantiationException, IllegalAccessException{
 		
 		Map<Integer, String> mpcnt = new HashMap<Integer, String>();
 		int t = stocklist.size() / threadcount;
@@ -21,26 +21,37 @@ public class ThreadListener {
 				
 				threadif.setData(stocklist.subList(i * t,
 						stocklist.size()), paramsint, resultlstAfterSearch,
-						HazelCommunicator.datacopy, mpcnt, i);
+						HazelCommunicator.datacopy, mpcnt, i,otherinfo);
 				
 				ls.add(threadif);
 			} else {
 				threadif.setData(stocklist.subList(i * t, (i + 1) * t), paramsint, resultlstAfterSearch,
-						HazelCommunicator.datacopy, mpcnt, i);
+						HazelCommunicator.datacopy, mpcnt, i,otherinfo);
 				
 				ls.add(threadif);
 
 			}
 			threadif.start();
 		}
-
-		while (mpcnt.size() != threadcount) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		
+		while (true) {
+			boolean continueflg=false;
+			for(int i=0;i<threadcount;i++){
+				if(mpcnt.get(i)==null){
+					continueflg=true;
+					try {
+						Thread.sleep(1);
+						break;
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
+			if(!continueflg){
+				break;
+			}
+			
 		}
 	
 	}

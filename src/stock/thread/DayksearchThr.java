@@ -68,7 +68,7 @@ public class DayksearchThr extends Thread implements ThreadIf {
 	@Override
 	public void setData(List<String> stocklist, int[] paramsint,
 			List<String> resultlstAfterSearch, Map<?, ?> distributedMap,
-			Map<Integer, String> mpcnt, int i) {
+			Map<Integer, String> mpcnt, int i,Map<?,?> otherinfo) {
 	
 		this.stocklist = stocklist;
 		this.paramsint = paramsint;

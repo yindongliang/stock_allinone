@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import stock.helper.HttpHelper;
+import stock.mmgridcommunicator.HazelCommunicator;
 import stock.service.Stock2DB;
 
 import com.hazelcast.core.IMap;
@@ -31,6 +32,7 @@ import com.opensymphony.xwork2.Validateable;
 import com.opensymphony.xwork2.ValidationAwareSupport;
 
 import common.answer.bean.dto.Datastorage;
+import common.answer.bean.dto.Datastoragec;
 import common.answer.bean.dto.Keyvalue;
 import common.answer.bean.dto.SearchRecord;
 
@@ -54,8 +56,8 @@ public class DealController extends ValidationAwareSupport implements
 	private static String applogicname;
 
 	private static String appserverinfo;
-	
-	private static int threadcnt=5;
+
+	private static int threadcnt = 5;
 
 	private Collection<SearchRecord> list;
 
@@ -70,6 +72,8 @@ public class DealController extends ValidationAwareSupport implements
 	}
 
 	private int datasize = -1;
+
+	private String ztkey = "";
 
 	@Autowired
 	HttpHelper httpHelper = null;
@@ -104,10 +108,10 @@ public class DealController extends ValidationAwareSupport implements
 						 * http://127.0.0.1:6182/dayk
 						 */
 						setAppserverinfo(kv.getValuee());
-					}else if ("threadcnt".equals(kv.getKeyee())) {
+					} else if ("threadcnt".equals(kv.getKeyee())) {
 						// avaliable logic app e.g. dayk weekk
-						threadcnt=Integer.parseInt(kv.getValuee());
-						
+						threadcnt = Integer.parseInt(kv.getValuee());
+
 					}
 				}
 			}
@@ -117,22 +121,37 @@ public class DealController extends ValidationAwareSupport implements
 			 */
 			JSONObject paramsInfo = JSONObject.fromObject(id);
 
-			if (HazelCommunicator.datacopy.isEmpty()) {
-				HazelCommunicator.sychdataFromHazel(mmaddress,threadcnt);
+			if (HazelCommunicator.datacopy.get("stocklist") == null) {
+				HazelCommunicator.sychdataFromHazel(mmaddress, threadcnt);
 			}
-			Logger.info("original data size is " + HazelCommunicator.datacopy.size());
+			Logger.info("original data size is "
+					+ HazelCommunicator.datacopy.size());
 			IMap<?, ?> map_remote = HazelCommunicator.map_remote;
-			
+
 			// get user's cell phone NO
 			String tel = paramsInfo.getString("tel");
-			/*ready the data which will be passed to logic app by URL*/
+			// get user's cell phone NO
+			if(paramsInfo.has("zt")){
+				String ztparam = paramsInfo.getString("zt");
+
+				String[] params = ztparam.split(",");
+
+				if (ztparam != null && !"".equals(ztparam)) {
+					for (int i = 0; i < params.length; i++) {
+						ztkey = ztkey + Integer.parseInt(params[i]);
+					}
+				}
+			}
+			
+			/* ready the data which will be passed to logic app by URL */
 			Map<String, Object> mapfromjsonobj = (Map<String, Object>) JSONObject
 					.toBean(paramsInfo, Map.class);
 			// replace restrict word in httpclient
-			mapfromjsonobj.put("mmaddress", mmaddress.replace(":", "&").replace(".", "&&"));
-			
+			mapfromjsonobj.put("mmaddress", mmaddress.replace(":", "&")
+					.replace(".", "&&"));
+
 			mapfromjsonobj.put("threadcnt", threadcnt);
-			
+
 			JSONObject tempjson = JSONObject.fromObject(mapfromjsonobj);
 
 			String forwardid = URLEncoder.encode(tempjson.toString(), "UTF-8");
@@ -155,32 +174,53 @@ public class DealController extends ValidationAwareSupport implements
 				}
 
 			}
-			/* get user searched data's stock cd from hazelcast
-			*  and get real data from memory copy by key.
-			*/
-			List<String> listAfterresearch = (List<String>) map_remote.get(tel);
-			Logger.info("searched data size is " + listAfterresearch.size());
+			if ("error".equals(status)) {
+				map_remote.remove(tel);
+				throw new Exception();
+			}
+			/*
+			 * get user searched data's stock cd from hazelcast and get real
+			 * data from memory copy by key.
+			 */
+			List<String> listAfterresearch = null;
+			if (!"nodata".equals(status)) {
+				listAfterresearch = (List<String>) map_remote.get(tel);
+			}
 			if (listAfterresearch != null && listAfterresearch.size() != 0) {
-				if (listAfterresearch.size() > 50) {
-					for (int i = 0; i < 50; i++) {
-						String stock_cd = listAfterresearch.get(i);
-						Datastorage ds = (Datastorage) HazelCommunicator.datacopy
-								.get(stock_cd);
-						mapdata.put(stock_cd, ds);
-					}
+				int cnt = 50;
+				if (listAfterresearch.size() <= 50) {
+					cnt = listAfterresearch.size();
+				}
+				for (int i = 0; i < cnt; i++) {
+					String stock_cd = listAfterresearch.get(i);
+					Datastoragec ds = (Datastoragec) HazelCommunicator.datacopy
+							.get(stock_cd);
+					mapdata.put(stock_cd, ds);
 				}
 
 				datasize = listAfterresearch.size();
-
+				Logger.info("searched data size is " + listAfterresearch.size());
+			} else {
+				datasize = 0;
+				Logger.info("searched data size is 0");
 			}
 
 			map_remote.remove(tel);
 
 			return new DefaultHttpHeaders("show");
 		} catch (Exception e) {
+
 			e.printStackTrace();
 			return new DefaultHttpHeaders("error");
 		}
+	}
+
+	public String getZtkey() {
+		return ztkey;
+	}
+
+	public void setZtkey(String ztkey) {
+		this.ztkey = ztkey;
 	}
 
 	// GET /orders

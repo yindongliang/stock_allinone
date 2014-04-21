@@ -3,7 +3,12 @@ package stock.thread;
 import java.util.List;
 import java.util.Map;
 
-import stock.HazelCommunicator;
+import org.springframework.beans.BeanUtils;
+
+import stock.mmgridcommunicator.HazelCommunicator;
+
+import common.answer.bean.dto.Datastorage;
+import common.answer.bean.dto.Datastoragec;
 
 public class HazelcastThr extends Thread implements ThreadIf {
 
@@ -17,7 +22,10 @@ public class HazelcastThr extends Thread implements ThreadIf {
 	public void run() {
 		for (String stock_cd : stocklist) {
 
-			datacopy.put(stock_cd, distributedMap.get(stock_cd));
+			Datastoragec ds = new Datastoragec();
+			BeanUtils.copyProperties((Datastorage) distributedMap.get(stock_cd), ds);
+			
+			datacopy.put(stock_cd, ds);
 
 		}
 
@@ -31,7 +39,7 @@ public class HazelcastThr extends Thread implements ThreadIf {
 	@Override
 	public void setData(List<String> stocklist, int[] paramsint,
 			List<String> resultlstAfterSearch, Map<?, ?> distributedMap,
-			Map<Integer, String> mpcnt, int i) {
+			Map<Integer, String> mpcnt, int i, Map<?, ?> otherinfo) {
 
 		this.stocklist = stocklist;
 

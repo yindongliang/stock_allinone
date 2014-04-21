@@ -27,6 +27,7 @@
 <script src="${pageContext.request.contextPath}/js/custom.js"></script>
 
 
+
 </head>
 
 <body>
@@ -102,7 +103,9 @@
 
 		</div>
 		<!-- /content -->
-
+		<div data-role="footer">
+			<h5>联系人:尹先生  邮箱:dl.yin@hotmail.com</h5>
+		</div>
 		<!-- /footer -->
 	</div>
 	<!-- /page -->

@@ -15,29 +15,27 @@ function inituserdata_tel() {
 	return u;
 }
 
-
 function getTelInfo(telno) {
 
 }
 
+function getSearchResult() {
 
-
-function getSearchResult(){
-	
 	if (!islogin()) {
 		$("#login_okbtn").unbind("click");
-		$("#login_okbtn").on("click", function(event){
+		$("#login_okbtn").on("click", function(event) {
 			login(getSearchResult);
 		});
 		$('#popupLogin').popup('open');
 		return;
 
-	} 
+	}
+	var validator=validatconditonForm();
+	if(validator.numberOfInvalids()>0){
+		return;
+	}
 	
-	
-	var t={};
-	t["tel"]=current_telno;
-	
+	var t = {};
 	
 
 	var conditions = $("[id$='param_con']");
@@ -45,48 +43,54 @@ function getSearchResult(){
 	for (var i = 0; i < conditions.size(); i++) {
 
 		var jqobj = $(conditions[i]);
-		var name = jqobj.attr("name");
+		
 
-		var conditonpair = $("[name=" + "'" + name + "'" + "]");
+		
 		if (jqobj.hasClass("invisibleofdiv")) {
 			continue;
 
 		} else {
-			
+
 			var inputs = jqobj.find($("[name$='_condition_text']"));
 			var temp = {};
-			
+			if(inputs.val()==""){
+				continue;
+			}
 			temp[inputs.attr("id")] = inputs.val();
 			t = $.extend(true, t, temp);
 		}
 
 	}
-
+	if($.isEmptyObject(t)){
+		return;
+	}
+	t["tel"] = current_telno;
+	
 	var myurl = window.location.href;
 	var posturl;
-	if(myurl.lastIndexOf("/", "http")!=myurl.length-1){
-		posturl="deal/"+JSON.stringify(t);
-		
-	}else{
-		posturl=JSON.stringify(t);
-		
+	if (myurl.lastIndexOf("/", "http") != myurl.length - 1) {
+		posturl = "deal/" + JSON.stringify(t);
+
+	} else {
+		posturl = JSON.stringify(t);
+
 	}
-	htmlobj=$.ajax({url:posturl,async:false});
-	var str= htmlobj.responseText
-	
-	
-	
+	htmlobj = $.ajax({
+		url : posturl,
+		async : false
+	});
+	var str = htmlobj.responseText
+
 	$("#table-custom-2").table("refresh");
 	$("#dataResult").html(htmlobj.responseText);
 	$("#table-custom-2").table("refresh");
-	var idx=str.indexOf("提示");
-	
-	if(idx>0){
+	var idx = str.indexOf("提示");
+
+	if (idx > 0) {
 		$("#msgzone").html(str.substring(idx));
 	}
-	
-}
 
+}
 
 function islogin() {
 
@@ -100,7 +104,6 @@ function login(callback) {
 	if (!$("#loginform").valid()) {
 		return false;
 	}
-
 
 	var findflg = false;
 	$.each(users, function(index, val) {
@@ -134,22 +137,21 @@ function login(callback) {
 	setOptions();
 	controlloginIcon();
 	localStorage.users = JSON.stringify(users);
-	$( "#popupLogin" ).unbind( "popupafterclose");
-	$( "#popupLogin" ).on( "popupafterclose", function( event, ui ) {
-		
+	$("#popupLogin").unbind("popupafterclose");
+	$("#popupLogin").on("popupafterclose", function(event, ui) {
+
 		callback();
 		$("#login_okbtn").unbind("click");
-		$("#login_okbtn").on("click", function(event){
+		$("#login_okbtn").on("click", function(event) {
 			login(donothing);
 		});
 	});
 	$("#popupLogin").popup("close");
-	
-	
+
 	return true;
 }
-function donothing(){
-	
+function donothing() {
+
 }
 
 function logout() {
@@ -182,24 +184,24 @@ var systemlistname2 = {
 
 var systemdata = {
 	"1" : {
-		"dayk" : "5,8,50,1",
-		"weekk" : "5,8,50,-1",
-		"onlykd": "5,8,50,-1",
-		"onlykw": "5,8,50,-1",
-		"zt": "5,8,50,-1",
-		"currentk": "5,8,50,-1",
-		"duringk": "5,8,50,-1",
-		"bankuai": "5,8,50,-1"
+		"dayk" : "5,8,80,1",
+		"weekk" : "5,8,80,1",
+		"onlykd" : "0,3,1,5,10,20",
+		"onlykw" : "0,3,1,5,10,10",
+		"zt" : "100,2",
+		"currentk" : "1,1,5,-5,5",
+		"duringk" : "0,30,25",
+		"bankuai" : "00,30,60"
 	},
 	"2" : {
 		"dayk" : "5,8,50,-1",
 		"weekk" : "5,8,50,1",
-		"onlykd": "5,8,50,-1",
-		"onlykw": "5,8,50,-1",
-		"zt": "5,8,50,-1",
-		"currentk": "5,8,50,-1",
-		"duringk": "5,8,50,-1",
-		"bankuai": "5,8,50,-1"
+		"onlykd" : "0,3,1,5,10,20",
+		"onlykw" : "0,3,1,5,10,10",
+		"zt" : "100,5",
+		"currentk" : "1,-1,5,-5,5",
+		"duringk" : "0,30,15",
+		"bankuai" : "00,30,60"
 	}
 };
 
@@ -216,10 +218,12 @@ function insertSlectBoxOption(id) {
 
 	var temp1 = {};
 	$("[name$='_condition_text']").each(function(index, ele) {
+		if(!$("#"+ele.id).parent().parent().parent().hasClass("invisibleofdiv")){
+			var temp = {};
+			temp[ele.id] = ele.value;
+			temp1 = $.extend(true, temp1, temp);
+		}
 		
-		var temp = {};
-		temp[ele.id] = ele.value;
-		temp1 = $.extend(true, temp1, temp);
 
 	});
 	// temp1={dayk:"8,5,0,-1",wk:"9,5,6,1"}
@@ -237,7 +241,6 @@ function insertSlectBoxOption(id) {
 	// save data to json
 	userdata_tel.data = userdata_temp;
 	userdata_tel.userlistname[userdata_tel.counter] = $("#parametername").val();
-
 
 	if (window.localStorage) {
 
@@ -257,16 +260,16 @@ function openpopupforDeletePram() {
 	}
 }
 function openeditsavePopup() {
-	
+
 	if (!islogin()) {
 		$("#login_okbtn").unbind("click");
-		$("#login_okbtn").on("click", function(event){
+		$("#login_okbtn").on("click", function(event) {
 			login(openeditsavePopup);
 		});
 		$('#popupLogin').popup('open');
 
 	} else {
-		
+
 		$('#popupSaveoredit').popup('open');
 	}
 
@@ -280,16 +283,15 @@ function deletecustomParams() {
 
 	$("#customprams option[value=" + key + "]").remove();
 	$("#parameterSetting option[value=" + key + "]").remove();
-	
+
 	$.each(userdata_tel.data[key], function(keyc, valc) {
 
 		$("#" + keyc + "_editor").val("");
 
 	});
-	
+
 	delete userdata_tel.data[key];
 	delete userdata_tel.userlistname[key];
-	
 
 	if (window.localStorage) {
 
@@ -297,6 +299,17 @@ function deletecustomParams() {
 
 	}
 
+}
+
+function getValuessub(d, o) {
+	var o2 = {};
+	$.each(o, function(k, v) {
+		o2[k] = v;
+	});
+	$.each(d, function(k, v) {
+		delete o2[k];
+	});
+	return o2;
 }
 
 function setValues(value) {
@@ -313,25 +326,46 @@ function setValues(value) {
 
 		data = systemdata;
 	}
+	
+	
+	if(value != "1" && value != "2"){
+		// hide the  conditon not in the saved data
+		var s = getValuessub(data[value], systemdata["1"]);
+		
 
-	$.each(data[value], function(keyc, valc) {
-		var elem=$("#" + keyc);
-		elem.val(valc);
-		if(valc==""){
+		$.each(s, function(keyc1, valc1) {
+			var elem = $("#" + keyc1);
 			var jqobj = elem.parent().parent().parent();
+			
 			var name = jqobj.attr("name");
 
 			var conditonpair = $("[name=" + "'" + name + "'" + "]");
-			if (jqobj.hasClass("invisibleofdiv")) {
-				$(conditonpair.get(0)).removeClass("invisibleofdiv");
 
-			} else {
+			jqobj.addClass("invisibleofdiv");
+			$(conditonpair.get(0)).removeClass("invisibleofdiv");
 
-				$(conditonpair.get(0)).addClass("invisibleofdiv");
-			}
-		}
-	});
+		});
+		
+		
+		//show the condtion in saved data but not selected.
+		$.each(data[value], function(keyc, valc) {
 
+			var elem = $("#" + keyc);
+			elem.val(valc);
+			var jqobj = elem.parent().parent().parent();
+			var name = jqobj.attr("name");
+			
+			var conditonpair = $("[name=" + "'" + name + "'" + "]");
+			$(conditonpair.get(0)).addClass("invisibleofdiv");
+			jqobj.removeClass("invisibleofdiv");
+
+		});
+	}else{
+		$.each(data[value], function(keyc, valc) {
+			var elem = $("#" + keyc);
+			elem.val(valc);
+		});
+	}
 	return false;
 
 }
@@ -411,295 +445,6 @@ $(document)
 		});
 // loadingpage
 
-$(document).ready(
-		function() {
-			
-			$("#login_okbtn").on("click", function(event){
-				login(donothing);
-			});
-			
-			var conditions = $("[id$='param_con']");
-
-			for (var i = 0; i < conditions.size(); i++) {
-
-				var jqobj = $(conditions[i]);
-				var name = jqobj.attr("name");
-
-				var conditonpair = $("[name=" + "'" + name + "'" + "]");
-				if (jqobj.hasClass("invisibleofdiv")) {
-					$(conditonpair.get(0)).removeClass("invisibleofdiv");
-
-				} else {
-
-					$(conditonpair.get(0)).addClass("invisibleofdiv");
-				}
-
-			}
-
-			// validation
-			jQuery.validator.addMethod("intAndLengthRight", function(value,
-					element, params) {
-				return this.optional(element)
-						|| function(value, element, params) {
-							var arr = value.split(",");
-
-							var reg = /[^0-9|\,|\-| ]/;
-							if (reg.test(value)) {
-								return false;
-
-							}
-
-							if (arr.length != params[0]) {
-								return false;
-							} else {
-								for (var i = 0; i < arr.length; i++) {
-									var t = parseInt(arr[i], 10);
-
-									if (isNaN(t)) {
-										return false;
-									}
-								}
-
-								return true;
-							}
-
-						}(value, element, params);
-			}, "格式有误，请修正输入！");
-
-			jQuery.validator.addMethod("samename", function(value, element,
-					params) {
-				return this.optional(element)
-						|| function(value, element, params) {
-							var flg = true;
-							$("#parameterSetting option").each(
-									function(index, elem) {
-
-										if ($.trim($(elem).html()) == $
-												.trim(element.value)) {
-											flg = false;
-											return false;
-										}
-										;
-
-									});
-							return flg;
-
-						}(value, element, params);
-			}, "参数名已经存在，请重命名");
-
-			jQuery.validator.addMethod("paramcounter", function(value, element,
-					params) {
-				return this.optional(element)
-						|| function(value, element, params) {
-							var flg = true;
-							var cnt = 0;
-							$("#parameterSetting option").each(
-									function(index, elem) {
-										cnt++;
-
-										if (cnt > 28) {
-											flg = false;
-											return false;
-										}
-
-									});
-							return flg;
-
-						}(value, element, params);
-			}, "参数名个数已超，请删除一些");
-
-			jQuery.validator.addMethod("validcellno", function(value, element,
-					params) {
-				return this.optional(element)
-						|| function(value, element, params) {
-
-							var reg = /^1[0-9][0-9]\d{8,8}$/;
-							if (!reg.test(value)) {
-								return false;
-
-							}
-							return true;
-
-						}(value, element, params);
-			}, "非有效手机号码");
-
-			jQuery.validator.addMethod("rangeCheck", function(value, element,
-					params) {
-
-				return this.optional(element)
-						|| function(value, element, params) {
-							// for conditon value 5,8,10,-1
-							var arr = value.split(",");
-							var errflg = false;
-							$.each(params,
-									function(key, val) {
-
-										var arrps = (val + "").split(",");
-										var intvalue = parseInt(arr[arrps[0]]);
-
-										if (intvalue < arrps[2]
-												|| intvalue > arrps[3]) {
-											errflg = true;
-											return false;
-										}
-									});
-							return !errflg;
-
-						}(value, element, params);
-			}, function(obj) {
-
-				var ele = $.makeArray(arguments).slice(1);
-
-				var errparams;
-
-				var arr = ele[0].value.split(",");
-
-				$.each(obj, function(key, val) {
-
-					var arrps = (val + "").split(",");
-					var intvalue = parseInt(arr[arrps[0]]);
-
-					if (intvalue < arrps[2] || intvalue > arrps[3]) {
-						errparams = arrps;
-						return false;
-					}
-				});
-
-				return jQuery.validator.format("{1}:请修正设定在{2}到{3}整数范围内",
-						errparams);
-			});
-
-			$('#conditonForm').validate({
-				rules : {
-
-					dayk__condition_text : {
-						"intAndLengthRight" : [ 4 ],
-						"rangeCheck" : {
-							p1 : [ 0, "第一个参数", 3, 10 ],
-							p2 : [ 1, "第二个参数", 2, 20 ],
-							p3 : [ 2, "第三个参数", 0, 99 ],
-							p4 : [ 3, "第四个参数", -1, 1 ]
-						}
-
-					},
-
-					weekk_condition_text : {
-						"intAndLengthRight" : [ 4 ],
-						"rangeCheck" : {
-							p1 : [ 0, "第一个参数", 3, 10 ],
-							p2 : [ 1, "第二个参数", 2, 20 ],
-							p3 : [ 2, "第三个参数", 0, 99 ],
-							p4 : [ 3, "第四个参数", -1, 1 ]
-						}
-
-					}
-
-				},
-
-				errorPlacement : function(error, element) {
-
-					error.appendTo(element.parent().parent());
-				}
-			});
-
-			var validator = $('#saveeditor_form').validate({
-				rules : {
-
-					parametername : {
-						required : true,
-						maxlength : 15,
-						"samename" : true,
-						"paramcounter" : true
-					}
-
-				},
-				messages : {
-					parametername : {
-						required : "请输入参数名",
-						maxlength : "参数名最长不能超过{0}个字"
-					}
-
-				},
-				errorPlacement : function(error, element) {
-
-					error.appendTo(element.parent().parent());
-
-				}
-			});
-
-			var validator = $('#loginform').validate({
-				rules : {
-					cellno : {
-						required : true,
-						"validcellno" : true
-					}
-				},
-				messages : {
-					cellno : {
-						required : "请输入手机号码"
-
-					}
-
-				},
-				errorPlacement : function(error, element) {
-
-					error.appendTo(element.parent().parent());
-
-				}
-			});
-			//localStorage setting
-			var a = function() {
-
-				if (window.localStorage) {
-					//					localStorage.clear();
-
-					if (localStorage.hasOwnProperty("users")) {
-
-						var userjson = JSON
-								.parse(localStorage.getItem("users"));
-						$.each(userjson, function(index, detail) {
-							users.push(detail);
-						});
-						var cnt = 0;
-						$.each(users, function(index, val) {
-							cnt++;
-							$.each(val, function(key, data) {
-								if (data.status == "login") {
-									current_telno = key;
-									userdata_tel = data;
-								}
-							});
-
-							;
-						});
-						if (cnt > 10) {
-							users.remove(0, cnt - 10 - 1);
-							localStorage.users = JSON.stringify(users);
-						}
-
-					}
-
-				}
-
-				if ($.isEmptyObject(userdata_tel)) {
-					var t = inituserdata_tel();
-					userdata_tel = t["00000000"];
-					current_telno = "00000000";
-					if ($.isEmptyObject(users)) {
-						users.push(t);
-					}
-				}
-
-			}();
-
-			
-
-			setOptions();
-
-			controlloginIcon();
-		}
-
-);
 
 Array.prototype.remove = function(from, to) {
 
@@ -889,3 +634,477 @@ function tableSort(jqTableObj) {
 		};
 	})();
 }
+var contionnames=["dayparam","weekparam","kxdparam","kxwparam","ztparam","currentkparam","duringkparam","bankuaiparam"];
+function loadconditioncontroll(){
+	$.each(contionnames,function(i,v){
+		if(i==0){
+			return true;
+		}
+		
+		var conditonpair = $("[name$=" + "'" + v + "'" + "]");
+		$(conditonpair.get(1)).addClass("invisibleofdiv");
+		$(conditonpair.get(0)).removeClass("invisibleofdiv");
+		
+	});
+}
+
+function validatconditonForm(){
+	var conditonvalidator=$('#conditonForm').validate({
+		rules : {
+
+			dayk_condition_text : {
+				"intAndLengthRight" : [ 4 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 3, 30 ],
+					p2 : [ 1, "第二个参数", 2, 20 ],
+					p3 : [ 2, "第三个参数", 0, 99 ],
+					p4 : [ 3, "第四个参数", -1, 1 ]
+				}
+
+			},
+
+			weekk_condition_text : {
+				"intAndLengthRight" : [ 4 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 3, 20 ],
+					p2 : [ 1, "第二个参数", 2, 20 ],
+					p3 : [ 2, "第三个参数", 0, 99 ],
+					p4 : [ 3, "第四个参数", -1, 1 ]
+				}
+
+			},
+			// todo 需要不定均线check
+			onlykd_condition_text : {
+				"intAndLengthRight" : [ 6 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 0, 10 ],
+					p2 : [ 1, "第二个参数", 0, 20 ],
+					p3 : [ 2, "第三个参数", -1, 1 ],
+					p4 : [ 3, "第四个参数", 3, 30 ],
+					p5 : [ 4, "第五个参数", 3, 30 ],
+					p6 : [ 5, "第六个参数", 3, 30 ]
+				},
+				"relativecheck":{
+					r1:["1-0>0","第二个参数必须大于等于第一个参数"]
+				}
+			},
+			onlykw_condition_text : {
+				"intAndLengthRight" : [ 6 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 0, 10 ],
+					p2 : [ 1, "第二个参数", 0, 20 ],
+					p3 : [ 2, "第三个参数", -1, 1 ],
+					p4 : [ 3, "第四个参数", 3, 30 ],
+					p5 : [ 4, "第五个参数", 3, 30 ],
+					p6 : [ 5, "第六个参数", 3, 30 ]
+				},
+				"relativecheck":{
+					r1:["1-0>0","第一个参数必须大于等于第二个参数"]
+				}
+			},
+			zt_condition_text : {
+				"intAndLengthRight" : [ 2 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 1, 100 ],
+					p2 : [ 1, "第二个参数", 0, 20 ]
+					
+				},
+				"relativecheck":{
+					r1:["0-1>0","第一个参数必须大于等于第二个参数"]
+				}
+			},
+			duringk_condition_text : {
+				"intAndLengthRight" : [ 3 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", 0, 20 ],
+					p2 : [ 1, "第二个参数", 2, 50 ],
+					p3 : [ 2, "第三个参数", 1, 500 ]
+					
+				}
+			},
+			currentk_condition_text : {
+				"intAndLengthRight" : [ 5 ],
+				"rangeCheck" : {
+					p1 : [ 0, "第一个参数", -1, 1 ],
+					p1 : [ 1, "第二个参数", -1, 1 ],
+					p2 : [ 2, "第三个参数", 3, 30 ],
+					p3 : [ 3, "第四个参数", -100, 100 ],
+					p4 : [ 4, "第五个参数", -100, 100 ]
+					
+				},
+				"relativecheck":{
+					r1:["4-3>0","第五个参数必须大于第四个参数"]
+				}
+			},
+			bankuai_condition_text : {
+				"intAndLengthInrange" : [10000 ]
+			}
+
+		},
+
+		errorPlacement : function(error, element) {
+
+			error.appendTo(element.parent().parent());
+		}
+	});
+	return conditonvalidator;
+}
+
+$(document).ready(
+		function() {
+
+			$("#login_okbtn").on("click", function(event) {
+				login(donothing);
+			});
+
+			var conditions = $("[id$='param_con']");
+
+			for (var i = 0; i < conditions.size(); i++) {
+
+				var jqobj = $(conditions[i]);
+				var name = jqobj.attr("name");
+
+				var conditonpair = $("[name=" + "'" + name + "'" + "]");
+				if (jqobj.hasClass("invisibleofdiv")) {
+					$(conditonpair.get(0)).removeClass("invisibleofdiv");
+
+				} else {
+
+					$(conditonpair.get(0)).addClass("invisibleofdiv");
+				}
+
+			}
+
+			// validation
+			jQuery.validator.addMethod("intAndLengthRight", function(value,
+					element, params) {
+				return this.optional(element)
+						|| function(value, element, params) {
+							var arr = value.split(",");
+
+							var reg = /[^0-9|\,|\-| ]/;
+							if (reg.test(value)) {
+								return false;
+
+							}
+
+							if (arr.length != params[0]) {
+								return false;
+							} else {
+								for (var i = 0; i < arr.length; i++) {
+									var t = parseInt(arr[i], 10);
+
+									if (isNaN(t)) {
+										return false;
+									}
+								}
+
+								return true;
+							}
+
+						}(value, element, params);
+			}, "格式有误，请修正输入！");
+			
+			jQuery.validator.addMethod("intAndLengthInrange", function(value,
+					element, params) {
+				return this.optional(element)
+						|| function(value, element, params) {
+							var arr = value.split(",");
+
+							var reg = /[^0-9|\,|\-| ]/;
+							if (reg.test(value)) {
+								return false;
+
+							}
+
+							if (arr.length > params[0]) {
+								return false;
+							} else {
+								for (var i = 0; i < arr.length; i++) {
+									var t = parseInt(arr[i], 10);
+
+									if (isNaN(t)) {
+										return false;
+									}
+								}
+
+								return true;
+							}
+
+						}(value, element, params);
+			}, "格式有误，请修正输入！");
+
+			jQuery.validator.addMethod("samename", function(value, element,
+					params) {
+				return this.optional(element)
+						|| function(value, element, params) {
+							var flg = true;
+							$("#parameterSetting option").each(
+									function(index, elem) {
+
+										if ($.trim($(elem).html()) == $
+												.trim(element.value)) {
+											flg = false;
+											return false;
+										}
+										;
+
+									});
+							return flg;
+
+						}(value, element, params);
+			}, "参数名已经存在，请重命名");
+
+			jQuery.validator.addMethod("paramcounter", function(value, element,
+					params) {
+				return this.optional(element)
+						|| function(value, element, params) {
+							var flg = true;
+							var cnt = 0;
+							$("#parameterSetting option").each(
+									function(index, elem) {
+										cnt++;
+
+										if (cnt > 28) {
+											flg = false;
+											return false;
+										}
+
+									});
+							return flg;
+
+						}(value, element, params);
+			}, "参数名个数已超，请删除一些");
+
+			jQuery.validator.addMethod("validcellno", function(value, element,
+					params) {
+				return this.optional(element)
+						|| function(value, element, params) {
+
+							var reg = /^1[0-9][0-9]\d{8,8}$/;
+							if (!reg.test(value)) {
+								return false;
+
+							}
+							return true;
+
+						}(value, element, params);
+			}, "非有效手机号码");
+
+			jQuery.validator.addMethod("rangeCheck", function(value, element,
+					params) {
+
+				return this.optional(element)
+						|| function(value, element, params) {
+							// for conditon value 5,8,10,-1
+							var arr = value.split(",");
+							var errflg = false;
+							$.each(params,
+									function(key, val) {
+
+										var arrps = (val + "").split(",");
+										var intvalue = parseInt(arr[arrps[0]]);
+
+										if (intvalue < arrps[2]
+												|| intvalue > arrps[3]) {
+											errflg = true;
+											return false;
+										}
+									});
+							return !errflg;
+
+						}(value, element, params);
+			}, function(obj) {
+
+				var ele = $.makeArray(arguments).slice(1);
+
+				var errparams;
+
+				var arr = ele[0].value.split(",");
+
+				$.each(obj, function(key, val) {
+
+					var arrps = (val + "").split(",");
+					var intvalue = parseInt(arr[arrps[0]]);
+
+					if (intvalue < arrps[2] || intvalue > arrps[3]) {
+						errparams = arrps;
+						return false;
+					}
+				});
+
+				return jQuery.validator.format("{1}:请修正设定在{2}到{3}整数范围内",
+						errparams);
+			});
+			
+			jQuery.validator.addMethod("relativecheck", function(value, element,
+					params) {
+
+				return this.optional(element)
+						|| function(value, element, params) {
+							// for conditon value 5,8,10,-1
+							var arr = value.split(",");
+							var errflg = false;
+							$.each(params,
+									function(key, val) {
+										
+										var arrps = (val + "").split(",");
+										//2-1>0 第3参数的值大于第一参数的值
+										var rules=arrps[0].split(">");
+										
+										//2-1
+										var numbers=rules[0].split("-");
+										
+										//第三参数的值
+										var res=parseInt(arr[numbers[0]]);
+										
+										for(var i=1;i<numbers.length;i++){
+											
+											res=res-parseInt(arr[numbers[i]]);
+										}
+										
+										
+
+										if (res <0) {
+											errflg = true;
+											return false;
+										}
+									});
+							return !errflg;
+
+						}(value, element, params);
+			}, function(obj) {
+
+				var ele = $.makeArray(arguments).slice(1);
+
+				var errparams;
+
+				var arr = ele[0].value.split(",");
+
+				$.each(obj, function(key, val) {
+
+					
+					var arrps = (val + "").split(",");
+					//2-1>0 第3参数的值大于第一参数的值
+					var rules=arrps[0].split(">");
+					
+					//2-1
+					var numbers=rules[0].split("-");
+					
+					//第三参数的值
+					var res=parseInt(arr[numbers[0]]);
+					for(var i=1;i<numbers.length;i++){
+						
+						res=res-parseInt(arr[numbers[i]]);
+					}
+					
+					if (res <0) {
+						errparams = arrps;
+						return false;
+					}
+				});
+
+				return jQuery.validator.format("{1}",
+						errparams);
+			});
+
+
+			//validator function
+			validatconditonForm();
+			var validator = $('#saveeditor_form').validate({
+				rules : {
+
+					parametername : {
+						required : true,
+						maxlength : 15,
+						"samename" : true,
+						"paramcounter" : true
+					}
+
+				},
+				messages : {
+					parametername : {
+						required : "请输入参数名",
+						maxlength : "参数名最长不能超过{0}个字"
+					}
+
+				},
+				errorPlacement : function(error, element) {
+
+					error.appendTo(element.parent().parent());
+
+				}
+			});
+
+			var validator = $('#loginform').validate({
+				rules : {
+					cellno : {
+						required : true,
+						"validcellno" : true
+					}
+				},
+				messages : {
+					cellno : {
+						required : "请输入手机号码"
+
+					}
+
+				},
+				errorPlacement : function(error, element) {
+
+					error.appendTo(element.parent().parent());
+
+				}
+			});
+			//localStorage setting
+			var a = function() {
+
+				if (window.localStorage) {
+					//					localStorage.clear();
+
+					if (localStorage.hasOwnProperty("users")) {
+
+						var userjson = JSON
+								.parse(localStorage.getItem("users"));
+						$.each(userjson, function(index, detail) {
+							users.push(detail);
+						});
+						var cnt = 0;
+						$.each(users, function(index, val) {
+							cnt++;
+							$.each(val, function(key, data) {
+								if (data.status == "login") {
+									current_telno = key;
+									userdata_tel = data;
+								}
+							});
+
+							;
+						});
+						if (cnt > 10) {
+							users.remove(0, cnt - 10 - 1);
+							localStorage.users = JSON.stringify(users);
+						}
+
+					}
+
+				}
+
+				if ($.isEmptyObject(userdata_tel)) {
+					var t = inituserdata_tel();
+					userdata_tel = t["00000000"];
+					current_telno = "00000000";
+					if ($.isEmptyObject(users)) {
+						users.push(t);
+					}
+				}
+
+			}();
+
+			setOptions();
+
+			controlloginIcon();
+			loadconditioncontroll();
+		}
+
+);

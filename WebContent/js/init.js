@@ -1,10 +1,10 @@
 $(document).ready(
 		function() {
-			
-			$("#login_okbtn").on("click", function(event){
+
+			$("#login_okbtn").on("click", function(event) {
 				login(donothing);
 			});
-			
+
 			var conditions = $("[id$='param_con']");
 
 			for (var i = 0; i < conditions.size(); i++) {
@@ -159,7 +159,7 @@ $(document).ready(
 			$('#conditonForm').validate({
 				rules : {
 
-					dayk__condition_text : {
+					dayk_condition_text : {
 						"intAndLengthRight" : [ 4 ],
 						"rangeCheck" : {
 							p1 : [ 0, "第一个参数", 3, 10 ],
@@ -171,6 +171,17 @@ $(document).ready(
 					},
 
 					weekk_condition_text : {
+						"intAndLengthRight" : [ 4 ],
+						"rangeCheck" : {
+							p1 : [ 0, "第一个参数", 3, 10 ],
+							p2 : [ 1, "第二个参数", 2, 20 ],
+							p3 : [ 2, "第三个参数", 0, 99 ],
+							p4 : [ 3, "第四个参数", -1, 1 ]
+						}
+
+					},
+
+					onlydk_condition_text : {
 						"intAndLengthRight" : [ 4 ],
 						"rangeCheck" : {
 							p1 : [ 0, "第一个参数", 3, 10 ],
@@ -278,8 +289,6 @@ $(document).ready(
 				}
 
 			}();
-
-			
 
 			setOptions();
 
