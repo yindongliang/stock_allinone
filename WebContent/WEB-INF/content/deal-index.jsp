@@ -104,10 +104,11 @@
 		</div>
 		<!-- /content -->
 		<div data-role="footer">
-			<h5>联系人:尹先生  邮箱:dl.yin@hotmail.com</h5>
+			<h5>欢迎来电咨询:dl.yin@hotmail.com</h5>
 		</div>
 		<!-- /footer -->
 	</div>
 	<!-- /page -->
 
 </body>
+</html>

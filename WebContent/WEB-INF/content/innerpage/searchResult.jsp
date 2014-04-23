@@ -13,12 +13,12 @@
 					data-input="#filterTable-input"  >
 					<thead >
 						<tr class="ui-bar-d">
-							<th data-priority="2">股票代码</th>
-							<th>股票名称</th>
-							<th class="sortable" data-priority="3"><abbr title="">最近净资产收益率(%)</abbr></th>
-							<th class="sortable" data-priority="1"><abbr title="">涨停个数</abbr></th>
-							<th class="sortable" data-priority="5"><abbr title="">流通股本(万股)</abbr></th>
-							<th class="sortable" data-priority="6"><abbr title="">流通股东持股比例</abbr></th>
+							<th data-priority="1">股票代码</th>
+							<th data-priority="2">股票名称</th>
+							<th class="sortable" data-priority="3"  datatype="float"><abbr title="">最近净资产收益率(%)</abbr></th>
+							<th class="sortable" data-priority="4"  datatype="int"><abbr title="">涨停个数</abbr></th>
+							<th class="sortable" data-priority="5"  datatype="float"><abbr title="">流通股本(万股)</abbr></th>
+							<th class="sortable" data-priority="6"  datatype="float"><abbr title="">流通股东持股比例(%)</abbr></th>
 							<th data-priority="7">数据更新日期</th>
 						</tr>
 					</thead>

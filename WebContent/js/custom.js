@@ -18,7 +18,7 @@ function inituserdata_tel() {
 function getTelInfo(telno) {
 
 }
-
+var dataResearchedFlg=false;
 function getSearchResult() {
 
 	if (!islogin()) {
@@ -89,6 +89,7 @@ function getSearchResult() {
 	if (idx > 0) {
 		$("#msgzone").html(str.substring(idx));
 	}
+	dataResearchedFlg=true;
 
 }
 
@@ -568,13 +569,14 @@ function tableSort(jqTableObj) {
 			arr[i] = row[i]
 		});
 
-		if ($(this).hasClass('current')) {
+		if ($(this).hasClass('current')&&!dataResearchedFlg) {
 			arr.reverse();
 		} else {
 			arr.sort(Utils.sortStr(index, dataType))
 
 			tableObj.find('thead th').removeClass('current');
 			$(this).addClass('current');
+			dataResearchedFlg=false;
 		}
 
 		var fragment = document.createDocumentFragment();
@@ -589,6 +591,7 @@ function tableSort(jqTableObj) {
 	var Utils = (function() {
 		function sortStr(index, dataType) {
 			return function(a, b) {
+				alert($(a).html())
 				var aText = $(a).find('td:nth-child(' + index + ')').attr(
 						'_order')
 						|| $(a).find('td:nth-child(' + index + ')').text();
@@ -1105,6 +1108,19 @@ $(document).ready(
 
 			controlloginIcon();
 			loadconditioncontroll();
+			$('html').bind('keypress', function(e)
+					{
+					   if(e.keyCode == 13)
+					   {
+					      return false;
+					   }
+					});
+			/*$('html').bind('contextmenu', function(e)
+					{
+					   
+					      return false;
+					   
+					});*/
 		}
 
 );

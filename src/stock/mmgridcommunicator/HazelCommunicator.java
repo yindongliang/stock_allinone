@@ -22,26 +22,82 @@ public class HazelCommunicator {
 	public static IMap<?, ?> map_remote;
 	public static Map<String, Object> datacopy = new HashMap<String, Object>();
 	private static final Log Logger = LogFactory.getLog(HazelCommunicator.class);
+	public static String mmaddress;
+	public static int threadcount;
+	static{
+		Thread tr = new Thread() {
+	
+	        @Override
+	        public void run() {
+	            while (true) {
+	            	if(mmaddress==null){
+	            		try {
+							sleep(5*60*1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	            		continue;
+	            	}
+	            	
+	            	if(datacopy.isEmpty()){
+	            		try {
+							sychdataFromHazel(mmaddress,threadcount);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	            	}
+	            	
+	            	String stockdateinremote=((String) map_remote.get("stockdate"));
+	            	String stockdateinlocalm=(String)datacopy.get("stockdate");
+	            	if(!stockdateinremote.equals(stockdateinlocalm)){
+	            		try {
+							sychdataFromHazel(mmaddress,threadcount);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	            	}
+	            }
+	        }
+	    };
+	    tr.start();
+	}
+	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public synchronized static void  sychdataFromHazel(String mmaddress,int threadcount) throws InstantiationException, IllegalAccessException {
+	public synchronized static void  sychdataFromHazel(String mmaddress,int threadcount) throws Exception {
 		ClientConfig clientConfig = new ClientConfig();
-
+		HazelCommunicator.mmaddress=mmaddress;
+		HazelCommunicator.threadcount=threadcount;
 		clientConfig.addAddress(mmaddress);
 		HazelcastInstance client = HazelcastClient
 				.newHazelcastClient(clientConfig);
 		map_remote = client.getMap("stockers");
 		List<String> stockcdls = null;
+		int i=0;
 		while(true){
+			
 			stockcdls =((List<String>) map_remote.get("stocklist"));
 			if(stockcdls==null){
+				if(i>10){
+					break;
+				}
+				Thread.sleep(1);
+				i++;
 				continue;
 			}else{
 				break;
 			}
 			
 		}
+		if(i>10){
+			throw new Exception("maybe there is nodata in hazelcast");
+		}
+		String stockdate=((String) map_remote.get("stockdate"));
+		datacopy.clear();
 		datacopy.put("stocklist", stockcdls);
-		
+		datacopy.put("stockdate", stockdate);
 		if(stockcdls==null){
 			Logger.info("no data in memory grid");
 		}
@@ -50,7 +106,7 @@ public class HazelCommunicator {
 	}
 	
 
-	public static String setStockListForfutherDeal(JSONObject paramsInfo,String tel,List<String> stocklist) throws InstantiationException, IllegalAccessException{
+	public static String setStockListForfutherDeal(JSONObject paramsInfo,String tel,List<String> stocklist) throws Exception{
 		
 		if (HazelCommunicator.datacopy.get("stocklist")==null) {
 			HazelCommunicator.sychdataFromHazel(paramsInfo.getString("mmaddress").replace("&&", ".").replace("&", ":"),5);
@@ -83,34 +139,5 @@ public class HazelCommunicator {
 		return "listSetComplete";
 	}
 
-	static class Fastcopy extends Thread {
-		private List<String> stocklist;
-
-		Map<?, ?> map;
-		boolean complete = false;
-		Map<Integer, String> mpcnt;
-		int i;
-
-		public Fastcopy(List<String> stocklist, Map<?, ?> map, Map<Integer, String> mpcnt, int i) {
-			this.stocklist = stocklist;
-			this.mpcnt = mpcnt;
-			this.i = i;
-			this.map = map;
-			this.start();
-		}
-
-		public void run() {
-
-			
-
-			for (String stock_cd : stocklist) {
-
-				datacopy.put(stock_cd, map.get(stock_cd));
-				
-			}
-
-			mpcnt.put(i, "");
-		}
-
-	}
+	
 }
