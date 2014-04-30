@@ -84,11 +84,10 @@ function getSearchResult() {
 	$("#table-custom-2").table("refresh");
 	$("#dataResult").html(htmlobj.responseText);
 	$("#table-custom-2").table("refresh");
-	var idx = str.indexOf("提示");
 
-	if (idx > 0) {
-		$("#msgzone").html(str.substring(idx));
-	}
+	$("#msgzone").html($("#resultmsg").html());
+	$("#resultmsg").remove();
+
 	dataResearchedFlg=true;
 
 }
@@ -591,7 +590,7 @@ function tableSort(jqTableObj) {
 	var Utils = (function() {
 		function sortStr(index, dataType) {
 			return function(a, b) {
-				alert($(a).html())
+				
 				var aText = $(a).find('td:nth-child(' + index + ')').attr(
 						'_order')
 						|| $(a).find('td:nth-child(' + index + ')').text();

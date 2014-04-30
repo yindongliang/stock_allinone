@@ -145,7 +145,7 @@ label.error {
 				删除条件 </a>
 		</div>
 		<div class="ui-block-b">
-			<div class="ui-body ui-body-d">当日K线:收阳或阴,收盘价不低于x日均线,涨幅大于x%,小于x%</div>
+			<div class="ui-body ui-body-d">当日K线:收阳或阴,收盘价不低于x日均线,涨幅大于x1%,小于x2%</div>
 		</div>
 		<div class="ui-block-c">
 			<div class="ui-body ui-body-d">例:只查收阳,收盘价不低于5日均线,涨幅大于-5%,小于5%:(1,-1,5,-5,5)</div>
@@ -167,7 +167,7 @@ label.error {
 				删除条件 </a>
 		</div>
 		<div class="ui-block-b">
-			<div class="ui-body ui-body-d">期间K线:x天前起,x天内,最高最低相差x%以上</div>
+			<div class="ui-body ui-body-d">期间K线:x天前起,?天内,最高最低相差?%以上</div>
 		</div>
 		<div class="ui-block-c">
 			<div class="ui-body ui-body-d">例:当天算起,30天内,最高最低相差15%以上:(0,30,15)</div>

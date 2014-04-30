@@ -7,24 +7,26 @@
 <meta
 	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"
 	name="viewport" />
-<title>未定</title>
+	<meta name="keywords" content="kk, KK, 搜股, 股票, 问股, 快快, 寻股, 找股, 技术, 形态, k线, K线, 推荐股票, 荐股">
+	<link rel="shortcut icon" href="images/ajax-loader.gif">
+<title>KK搜股</title>
 <link
 	href="${pageContext.request.contextPath}/css/mytheme.css"
 	type="text/css" rel="stylesheet">
 	<link
-	href="${pageContext.request.contextPath}/css/jquery.mobile.icons-1.4.2.css"
+	href="${pageContext.request.contextPath}/css/jquery.mobile.icons-1.4.2.min.css"
 	type="text/css" rel="stylesheet">
 	<link
-	href="${pageContext.request.contextPath}/css/jquery.mobile.structure-1.4.2.css"
+	href="${pageContext.request.contextPath}/css/jquery.mobile.structure-1.4.2c.min.css"
 	type="text/css" rel="stylesheet">
 	
 <link href="${pageContext.request.contextPath}/css/custom.css"
 	type="text/css" rel="stylesheet">
-<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.validate.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.validate.min.js"></script>
 <script
-	src="${pageContext.request.contextPath}/js/jquery.mobile-1.4.2.js"></script>
-<script src="${pageContext.request.contextPath}/js/custom.js"></script>
+	src="${pageContext.request.contextPath}/js/jquery.mobile-1.4.2.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/myjs.min.js"></script>
 
 
 
@@ -104,7 +106,7 @@
 		</div>
 		<!-- /content -->
 		<div data-role="footer">
-			<h5>欢迎来电咨询:dl.yin@hotmail.com</h5>
+			<h5>欢迎咨询:dl.yin@hotmail.com</h5>
 		</div>
 		<!-- /footer -->
 	</div>

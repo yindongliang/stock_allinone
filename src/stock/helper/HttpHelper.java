@@ -26,8 +26,8 @@ public class HttpHelper {
 
     static {
         final PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
-        cm.setMaxTotal(200);
-        cm.setDefaultMaxPerRoute(200);
+        cm.setMaxTotal(2000);
+        cm.setDefaultMaxPerRoute(2000);
 
         Thread tr = new Thread() {
 
@@ -35,7 +35,7 @@ public class HttpHelper {
             public void run() {
                 while (true) {
 
-                    cm.closeIdleConnections(100, TimeUnit.MILLISECONDS);
+                    cm.closeIdleConnections(5, TimeUnit.MILLISECONDS);
 
                 }
             }

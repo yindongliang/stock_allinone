@@ -1,16 +1,15 @@
 package stock.mmgridcommunicator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stock.thread.HazelcastThr;
-import stock.thread.ThreadListener;
+import stock.mmgridcommunicator.thread.HazelcastThr;
+import stock.mmgridcommunicator.thread.ThreadListener;
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -24,6 +23,7 @@ public class HazelCommunicator {
 	private static final Log Logger = LogFactory.getLog(HazelCommunicator.class);
 	public static String mmaddress;
 	public static int threadcount;
+	public static boolean sychcompleteflg=false;
 	static{
 		Thread tr = new Thread() {
 	
@@ -32,7 +32,8 @@ public class HazelCommunicator {
 	            while (true) {
 	            	if(mmaddress==null){
 	            		try {
-							sleep(5*60*1000);
+	            			Logger.info("need to fire the first request to read the data from hazelcast");
+							sleep(1*60*1000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -43,6 +44,7 @@ public class HazelCommunicator {
 	            	if(datacopy.isEmpty()){
 	            		try {
 							sychdataFromHazel(mmaddress,threadcount);
+							continue;
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -50,15 +52,26 @@ public class HazelCommunicator {
 	            	}
 	            	
 	            	String stockdateinremote=((String) map_remote.get("stockdate"));
+	            	
 	            	String stockdateinlocalm=(String)datacopy.get("stockdate");
-	            	if(!stockdateinremote.equals(stockdateinlocalm)){
-	            		try {
-							sychdataFromHazel(mmaddress,threadcount);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+	            	
+	            	if(stockdateinremote!=null&&stockdateinlocalm!=null){
+	            		if(!stockdateinremote.equals(stockdateinlocalm)){
+	            			try {
+								sychdataFromHazel(mmaddress,threadcount);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+	            		}
+	            		
 	            	}
+	            	try {
+						Thread.sleep(1*1000*60);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	            }
 	        }
 	    };
@@ -67,6 +80,11 @@ public class HazelCommunicator {
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public synchronized static void  sychdataFromHazel(String mmaddress,int threadcount) throws Exception {
+		
+		sychcompleteflg=false;
+		if(datacopy!=null&&datacopy.get("stockdate")!=null){
+			return;
+		}
 		ClientConfig clientConfig = new ClientConfig();
 		HazelCommunicator.mmaddress=mmaddress;
 		HazelCommunicator.threadcount=threadcount;
@@ -97,47 +115,21 @@ public class HazelCommunicator {
 		String stockdate=((String) map_remote.get("stockdate"));
 		datacopy.clear();
 		datacopy.put("stocklist", stockcdls);
-		datacopy.put("stockdate", stockdate);
+		
+		Logger.info("data is synchronizing with memory");
 		if(stockcdls==null){
 			Logger.info("no data in memory grid");
 		}
 		
-		ThreadListener.listenThreads(null, null, stockcdls, HazelcastThr.class, threadcount,null);
+		ThreadListener.listenThreads(null, new ArrayList<String>(), stockcdls, HazelcastThr.class, threadcount,null);
+		
+		datacopy.put("stockdate", stockdate);
+		sychcompleteflg=true;
+		Logger.info("data is synchronized with memory");
 	}
 	
 
-	public static String setStockListForfutherDeal(JSONObject paramsInfo,String tel,List<String> stocklist) throws Exception{
-		
-		if (HazelCommunicator.datacopy.get("stocklist")==null) {
-			HazelCommunicator.sychdataFromHazel(paramsInfo.getString("mmaddress").replace("&&", ".").replace("&", ":"),5);
-		}
-		Logger.info("data size is " + HazelCommunicator.datacopy.size());
-		IMap<String, List<String>> map_remote = (IMap<String, List<String>>) HazelCommunicator.map_remote;
-
-		Logger.info("get cached data ");
-		
-		// get data from memory,if it exists
-		List<String> resultls = (List<String>) map_remote.get(tel);
-
-		Logger.info("user tel is " + tel);
-		// if searched result is empty 
-		if (resultls == null || resultls.size() == 0) {
-			
-			stocklist.addAll((List<String>) HazelCommunicator.datacopy.get("stocklist"));
-			if (stocklist.size() == 0) {
-				Logger.info("stock list is null need to check memory ");
-			}
-		} else {
-			// if exist,so search the data from memory,small range
-			Logger.info("search range data size is " + resultls.size());
-			stocklist.addAll(resultls);
-		}
-		if (stocklist.size() == 0) {
-			// MemcachedUtil.tearDownAfterClass();
-			return "nodata";
-		}
-		return "listSetComplete";
-	}
+	
 
 	
 }

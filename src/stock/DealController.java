@@ -1,6 +1,7 @@
 package stock;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,13 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.rest.DefaultHttpHeaders;
@@ -23,10 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import stock.helper.HttpHelper;
+import stock.logic.Bankuaisearchlogic;
+import stock.logic.Currentksearch;
+import stock.logic.Dayksearchlogic;
+import stock.logic.Duringksearchlogic;
+import stock.logic.Onlykdsearchlogic;
+import stock.logic.Onlykwsearchlogic;
+import stock.logic.Weekksearchlogic;
+import stock.logic.Ztsearchlogic;
 import stock.mmgridcommunicator.HazelCommunicator;
 import stock.service.Stock2DB;
 
-import com.hazelcast.core.IMap;
 import com.opensymphony.xwork2.ModelDriven;
 import com.opensymphony.xwork2.Validateable;
 import com.opensymphony.xwork2.ValidationAwareSupport;
@@ -80,17 +85,33 @@ public class DealController extends ValidationAwareSupport implements
 	@Autowired
 	protected Stock2DB stock2DB = null;
 
+	@Autowired
+	Dayksearchlogic dayksearchlogic=null;
+	@Autowired
+	Bankuaisearchlogic bankuaisearchlogic=null;
+	@Autowired
+	Currentksearch currentksearch=null;
+	@Autowired
+	Weekksearchlogic weekksearchlogic=null;
+	@Autowired
+	Onlykdsearchlogic onlykdsearchlogic=null;
+	@Autowired
+	Onlykwsearchlogic onlykwsearchlogic=null;
+	@Autowired
+	Duringksearchlogic duringksearchlogic=null;
+	@Autowired
+	Ztsearchlogic ztsearchlogic=null;
+	
 	private static final Log Logger = LogFactory.getLog(DealController.class);
 
-	// GET /orders/1
+	
 	@SuppressWarnings("unchecked")
 	public HttpHeaders show() {
 		try {
 			if (mmaddress == null) {
 				List<Keyvalue> kvlst = stock2DB.getKeyvalue();
-				HttpServletRequest request = ServletActionContext.getRequest();
-				String path = request.getRequestURI();
-				String[] arr = path.split("/");
+				
+				
 				for (Keyvalue kv : kvlst) {
 
 					if ("mmaddress".equals(kv.getKeyee())) {
@@ -101,13 +122,6 @@ public class DealController extends ValidationAwareSupport implements
 					} else if ("applogicname".equals(kv.getKeyee())) {
 						// avaliable logic app e.g. dayk weekk
 						setApplogicname(kv.getValuee());
-					} else if (arr[1].equals(kv.getKeyee())) {
-
-						/*
-						 * ulr for invoke logic app e.g.
-						 * http://127.0.0.1:6182/dayk
-						 */
-						setAppserverinfo(kv.getValuee());
 					} else if ("threadcnt".equals(kv.getKeyee())) {
 						// avaliable logic app e.g. dayk weekk
 						threadcnt = Integer.parseInt(kv.getValuee());
@@ -115,21 +129,24 @@ public class DealController extends ValidationAwareSupport implements
 					}
 				}
 			}
-			/*
-			 * http://localhost:8082/stock_dispatch/deal/{tel:1870131245,dayk:
-			 * '5,8,80,1'} id={tel:1870131245,dayk:'5,8,80,1'}
-			 */
-			JSONObject paramsInfo = JSONObject.fromObject(id);
-
-			if (HazelCommunicator.datacopy.get("stocklist") == null) {
+			
+			if (!HazelCommunicator.sychcompleteflg) {
 				HazelCommunicator.sychdataFromHazel(mmaddress, threadcnt);
+			}else{
+				if(HazelCommunicator.datacopy.get("stockdate")==null){
+					return new DefaultHttpHeaders("nodata");
+				}
 			}
 			Logger.info("original data size is "
 					+ HazelCommunicator.datacopy.size());
-			IMap<?, ?> map_remote = HazelCommunicator.map_remote;
-
+			Logger.info("the id is :"+id);
+			JSONObject paramsInfo = JSONObject.fromObject(id);
+			
 			// get user's cell phone NO
 			String tel = paramsInfo.getString("tel");
+			Logger.info("the tel is :"+tel);
+			Logger.info("url is :"+URLEncoder.encode(paramsInfo.toString(), "UTF-8"));
+			
 			// get user's cell phone NO
 			if(paramsInfo.has("zt")){
 				String ztparam = paramsInfo.getString("zt");
@@ -143,49 +160,95 @@ public class DealController extends ValidationAwareSupport implements
 				}
 			}
 			
-			/* ready the data which will be passed to logic app by URL */
-			Map<String, Object> mapfromjsonobj = (Map<String, Object>) JSONObject
-					.toBean(paramsInfo, Map.class);
-			// replace restrict word in httpclient
-			mapfromjsonobj.put("mmaddress", mmaddress.replace(":", "&")
-					.replace(".", "&&"));
-
-			mapfromjsonobj.put("threadcnt", threadcnt);
-
-			JSONObject tempjson = JSONObject.fromObject(mapfromjsonobj);
-
-			String forwardid = URLEncoder.encode(tempjson.toString(), "UTF-8");
-			System.out.println(forwardid);
 			Set<?> s = paramsInfo.keySet();
 			Iterator<?> it = s.iterator();
-
-			String[] appserverinfoarr = appserverinfo.split(",");
+			List<String> resultlstAfterSearch = null;
+			List<String> stocklist=(List<String>)HazelCommunicator.datacopy.get("stocklist");
+			if(stocklist==null){
+				return new DefaultHttpHeaders("nodata");
+			}
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				// if deal name is available and match the user who can do that.
-				// for now ,just make all of the deal can be run.
-
-				if (applogicname.contains(key)) {
-					status = httpHelper.sendRequest(
-							"/" + key + "/" + forwardid, appserverinfoarr);
+				if(!applogicname.contains(key)){
+					continue;
+				}
+				
+				String[] params = ((String) paramsInfo.get(key)).split(",");
+				
+				int[] paramsint = new int[params.length];
+				for (int i = 0; i < params.length; i++) {
+					paramsint[i] = Integer.parseInt(params[i]);
+				}
+				if("dayk".equals(key)){
+					
+					resultlstAfterSearch = new ArrayList<String>();
+					status = dayksearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
 					if (!"done".equals(status)) {
 						break;
 					}
+					stocklist=resultlstAfterSearch;
+				}else if("weekk".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = weekksearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("bankuai".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = bankuaisearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("currentk".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = currentksearch.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("duringk".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = duringksearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("onlykd".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = onlykdsearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("onlykw".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = onlykwsearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
+				}else if("zt".equals(key)){
+					resultlstAfterSearch = new ArrayList<String>();
+					status = ztsearchlogic.search(stocklist, paramsint, resultlstAfterSearch, HazelCommunicator.datacopy);
+					if (!"done".equals(status)) {
+						break;
+					}
+					stocklist=resultlstAfterSearch;
 				}
-
+				
 			}
 			if ("error".equals(status)) {
-				map_remote.remove(tel);
+				//map_remote.remove(tel);
 				throw new Exception();
 			}
 			/*
 			 * get user searched data's stock cd from hazelcast and get real
 			 * data from memory copy by key.
 			 */
-			List<String> listAfterresearch = null;
-			if (!"nodata".equals(status)) {
-				listAfterresearch = (List<String>) map_remote.get(tel);
-			}
+			List<String> listAfterresearch = resultlstAfterSearch;
+
 			if (listAfterresearch != null && listAfterresearch.size() != 0) {
 				int cnt = 50;
 				if (listAfterresearch.size() <= 50) {
@@ -204,8 +267,6 @@ public class DealController extends ValidationAwareSupport implements
 				datasize = 0;
 				Logger.info("searched data size is 0");
 			}
-
-			map_remote.remove(tel);
 
 			return new DefaultHttpHeaders("show");
 		} catch (Exception e) {
@@ -230,48 +291,7 @@ public class DealController extends ValidationAwareSupport implements
 
 	}
 
-	// GET /orders/1/edit
-	public String edit() {
-		return "edit";
-	}
-
-	// GET /orders/new
-	public String editNew() {
-
-		return "editNew";
-	}
-
-	// GET /orders/1/deleteConfirm
-	public String deleteConfirm() {
-		return "deleteConfirm";
-	}
-
-	// DELETE /orders/1
-	public String destroy() {
-
-		addActionMessage("Order removed successfully");
-		return "success";
-	}
-
-	// POST /orders
-	public HttpHeaders create() {
-
-		addActionMessage("New order created successfully");
-		return new DefaultHttpHeaders("success").setLocationId("");
-	}
-
-	// PUT /orders/1
-	public String update() {
-		addActionMessage("Order updated successfully");
-		return "success";
-	}
-
-	public void validate() {
-		// if (model.getClientName() == null || model.getClientName().length()
-		// ==0) {
-		// addFieldError("clientName", "The client name is empty");
-		// }
-	}
+	
 
 	@Override
 	public Object getModel() {
@@ -284,10 +304,7 @@ public class DealController extends ValidationAwareSupport implements
 		this.id = id;
 	}
 
-	//
-	// public Object getModel() {
-	// return (list != null ? list : model);
-	// }
+	
 
 	public String getStatus() {
 		return status;
@@ -336,6 +353,12 @@ public class DealController extends ValidationAwareSupport implements
 
 	public static void setApplogicname(String applogicname) {
 		DealController.applogicname = applogicname;
+	}
+
+	@Override
+	public void validate() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,5 +1,14 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@taglib prefix="s" uri="/struts-tags"%>
+<span id="resultmsg">
+查询结果共<s:property value="datasize" />
+	<s:if test="datasize>50">
+	,显示前50条。
+	</s:if>
+	<s:if test="datasize<=50">
+	条。
+	</s:if>
+</span>
 <s:iterator value="mapdata" id="column">
 	<tr>
 		<th><s:property value="key" /></th>
@@ -15,12 +24,9 @@
 		<td><s:property value="value.record_date" /></td>
 	</tr>
 </s:iterator>
-<s:if test="datasize>50">
-提示：查询结果共<s:property value="datasize" />,显示前50条。
-</s:if>
-<s:if test="datasize<=50">
-提示：查询结果共<s:property value="datasize" />条。
-</s:if>
+
+
+
 
 
 
