@@ -6,9 +6,9 @@ int firstslashidx= url.indexOf("/", 10);
 
 if(idx>8){
 	
-	response.sendRedirect(url.substring(0, firstslashidx)+"/stockfinder/deal");
+	response.sendRedirect(url.substring(0, firstslashidx)+"/stock_allinone/deal");
 }else{
-	response.sendRedirect(url+"/stockfinder/deal");
+	response.sendRedirect(url+"/stock_allinone/deal");
 }
 
 %>
