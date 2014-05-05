@@ -106,7 +106,7 @@
 		</div>
 		<!-- /content -->
 		<div data-role="footer">
-			<h5>欢迎咨询:dl.yin@hotmail.com</h5>
+			<h5>欢迎咨询:kksogu@gmail.com</h5>
 		</div>
 		<!-- /footer -->
 	</div>

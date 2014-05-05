@@ -109,11 +109,11 @@ function login(callback) {
 	$.each(users, function(index, val) {
 
 		$.each(val, function(key, data) {
-			if (key == $(tel).val()) {
+			if (key == $("#tel").val()) {
 
 				data.status = "login";
 				userdata_tel = data;
-				current_telno = $(tel).val();
+				current_telno = $("#tel").val();
 				findflg = true;
 				return;
 			}
@@ -124,20 +124,24 @@ function login(callback) {
 	});
 
 	if (!findflg) {
-
+		
 		var u = {};
 		var t = inituserdata_tel();
-		current_telno = $(tel).val();
+		
+		current_telno = $("#tel").val();
+		
 		t["00000000"].status = "login";
-		u[$(tel).val()] = t["00000000"];
-		userdata_tel = u[$(tel).val()];
+		u[$("#tel").val()] = t["00000000"];
+		userdata_tel = u[$("#tel").val()];
 
 		users.push(u);
 	}
+
 	setOptions();
 	controlloginIcon();
 	localStorage.users = JSON.stringify(users);
 	$("#popupLogin").unbind("popupafterclose");
+	
 	$("#popupLogin").on("popupafterclose", function(event, ui) {
 
 		callback();
@@ -146,6 +150,7 @@ function login(callback) {
 			login(donothing);
 		});
 	});
+	
 	$("#popupLogin").popup("close");
 
 	return true;
@@ -403,9 +408,10 @@ function saveEditor() {
 	var temp1 = {};
 	$("[name$='_editor_text']").each(function(index, ele) {
 		var temp = {};
-		temp[ele.id.split("_")[0]] = ele.value;
-		temp1 = $.extend(true, temp1, temp);
-
+		if(ele.value!=""){
+			temp[ele.id.split("_")[0]] = ele.value;
+			temp1 = $.extend(true, temp1, temp);
+		}
 	});
 	userdata_tel.data[$("#customprams").val()] = temp1;
 

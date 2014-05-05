@@ -1,3 +1,116 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html; charset=utf-8"%>
-<html><head><meta http-equiv=Content-Type content="text/html charset=utf-8"><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0;" name=viewport><meta name=keywords content="kk, KK, 搜股, 股票, 问股, 快快, 寻股, 找股, 技术, 形态, k线, K线, 推荐股票, 荐股"><link rel="shortcut icon" href=images/logo.png><title>KK搜股</title><link href=/stockfinder/css/mytheme.css type=text/css rel=stylesheet><link href=/stockfinder/css/jquery.mobile.icons-1.4.2.min.css type=text/css rel=stylesheet><link href=/stockfinder/css/jquery.mobile.structure-1.4.2c.min.css type=text/css rel=stylesheet><link href=/stockfinder/css/custom.css type=text/css rel=stylesheet><script src=/stockfinder/js/jquery-1.10.2.min.js></script><script src=/stockfinder/js/jquery.validate.min.js></script><script src=/stockfinder/js/jquery.mobile-1.4.2.min.js></script><script src=/stockfinder/js/myjs.min.js></script><body><div id=validator data-role=page><!DOCTYPE html><div data-role=panel id=condtionpanel data-position=left data-display=overlay data-theme=a><div><h3>选择条件</h3></div><div id=dayparam__choose name=dayparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-1>选择</label><input id=grid-checkbox-1 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">日均参:x日均线连续?日，?%，均线向上或向下</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:5日均线连续8日，60%，均线向上(5,8,60,1)向下用-1表示如(5,8,60,-1)</div></div></div><div id=weekparam_choose name=weekparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-2>选择</label><input id=grid-checkbox-2 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">周均参:x周均线连续?周，?%，均线向上或向下</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:5周均线连续8周，60%，均线向上(5,8,60,1)向下用-1表示如(5,8,60,-1)</div></div></div><div id=kxdparam__choose name=kxdparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-3>选择</label><input id=grid-checkbox-3 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">日K形态:x1日前开盘价格x2日前收盘价格组成K线，向上或向下穿过?,?,?日均线</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当日K线,向上穿过5,10,20日均线:(0,0,5,10,20)</div></div></div><div id=kxwparam__choose name=kxwparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-4>选择</label><input id=grid-checkbox-4 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">周K形态:x1周前开盘价格x2周前收盘价格组成K线，向上或向下穿过?,?,?周均线</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当周K线,向上穿过5,10,20周均线:(0,0,5,10,20)</div></div></div><div id=ztparam__choose name=ztparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-5>选择</label><input id=grid-checkbox-5 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">涨停个数:x日内，涨停个数大于y个</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:100日内涨停个数大于10个:(100,10)</div></div></div><div id=currentkparam__choose name=currentkparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-6>选择</label><input id=grid-checkbox-6 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">当日K线:收阳或阴,收盘价不低于x日均线,涨幅大于x1%,小于x2%</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:只查收阳,收盘价不低于5日均线,涨幅大于-5%,小于5%:(1,-1,5,-5,5)</div></div></div><div id=duringkparam__choose name=duringkparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-7>选择</label><input id=grid-checkbox-7 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">期间K线:x天前起,?天内,最高最低相差?%以上</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当天算起,30天内,最高最低相差15%以上:(0,30,15)</div></div></div><div id=bankuaiparam__choose name=bankuaiparam class="ui-grid-b ui-responsive"><div class="ui-block-a ui-alt-icon"><label for=grid-checkbox-8>选择</label><input id=grid-checkbox-8 name=grid-checkbox type=checkbox></div><div class=ui-block-b><div class="ui-body ui-body-d">板块:选择特定开头的,不填代表全查询</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:选择00,30开头的股票:(00,30)</div></div></div><div class="ui-grid-b ui-responsive"><div class=ui-block-a><input type=button value=确定 onclick=addcondtion()></div><div class=ui-block-b></div><div class=ui-block-c><a href=# data-rel=close class="ui-btn ui-shadow ui-corner-all">关闭</a></div></div></div><div data-role=panel id=editParamspanel data-position=left data-display=overlay data-theme=a><div><h3>选择自定义参数</h3></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><select id=customprams data-shadow=false onchange=setValuesForeditor(this.value)><option value=0>自定义参数列表</select></div><div class="ui-block-b ui-alt-icon"><a href=# data-rel=popup data-position-to=window data-transition=pop onclick=openpopupforDeletePram() class="ui-shadow ui-btn">删除参数</a></div></div><div><h3>参数明细</h3></div><form id=paramEditor_form><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">日均参:x日均线连续?日，?%，均线向上或向下</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=dayk_editor_text id=dayk_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">周均参:x周均线连续?周，?%，均线向上或向下</div></div><div class="ui-block-b ui-alt-icon"><label for=weekk_editor class=ui-hidden-accessible></label><input data-clear-btn=true name=weekk_editor_text id=weekk_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">日K形态:x1日前开盘价格x2日前收盘价格组成K线，向上或向下穿过x,x,x日均线</div></div><div class="ui-block-b ui-alt-icon"><label for=weekk_editor class=ui-hidden-accessible></label><input data-clear-btn=true name=onlykd_editor_text id=onlykd_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">周K形态:x1周前开盘价格x2周前收盘价格组成K线，向上或向下穿过x,x,x周均线</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=onlykw_editor_text id=onlykw_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">涨停个数:x日内，涨停个数大于y个</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=zt_editor_text id=zt_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">当日K线:收阳或阴,收盘价不低于x日均线,涨幅大于x1%,小于x2%</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=currentk_editor_text id=currentk_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">期间K线:x天前起,?天内,最高最低相差?%以上</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=duringk_editor_text id=duringk_editor></div></div><div class="ui-grid-a ui-responsive"><div class="ui-block-a ui-alt-icon"><div class="ui-body ui-body-d">板块:选择特定开头的,不填代表全查询</div></div><div class="ui-block-b ui-alt-icon"><label for=text-9 class=ui-hidden-accessible></label><input data-clear-btn=true name=bankuai_editor_text id=bankuai_editor></div></div></form><div class="ui-grid-b ui-responsive"><div class=ui-block-a><a href=# data-rel=popup data-position-to=window data-transition=pop onclick=openpopupforSavePram() class="ui-shadow ui-btn">修改</a></div><div class=ui-block-b></div><div class=ui-block-c><a href=# data-rel=close class="ui-btn ui-shadow ui-corner-all">关闭</a></div></div></div><div data-role=popup data-overlay-theme=a data-dismissible=false id=popupLogin data-theme=a class=ui-corner-all><div style="padding:10px 20px"><form id=loginform><h3>请输入手机号码</h3><div class="ui-grid-solo ui-responsive"><label for=tel class=ui-hidden-accessible>手机号码:</label><input name=cellno id=tel placeholder=手机号码 data-theme=a></div></form><div class="ui-grid-a ui-responsive"><div class=ui-block-a><a href=# id=login_okbtn class="ui-shadow ui-btn ui-corner-all">登陆</a></div><div class=ui-block-b><a href=# class="hide-page-loading-msg ui-shadow ui-btn ui-corner-all" data-rel=back>取消</a></div></div></div></div><div data-role=popup data-overlay-theme=a data-dismissible=false id=popupSaveoredit data-theme=a class=ui-corner-all><form id=saveeditor_form><div style="padding:10px 20px"><h3>如保存请输入参数名</h3><div><label for=parametername class=ui-hidden-accessible>参数名:</label><input id=parametername name=parametername value=自定义参数1 placeholder=自定义参数名 data-theme=a></div><div class="ui-grid-b ui-responsive"><div class=ui-block-a><a href=# onclick=insertSlectBoxOption(&quot;parameterSetting&quot;) class="ui-shadow ui-btn ui-corner-all">保存</a></div><div class=ui-block-b><a href=# onclick=$(&quot;#popupSaveoredit&quot;).popup(&quot;close&quot;),$(&quot;#editParamspanel&quot;).panel(&quot;open&quot;) class="ui-shadow ui-btn ui-corner-all">编辑</a></div><div class=ui-block-c><a href=# class="hide-page-loading-msg ui-shadow ui-btn ui-corner-all" data-rel=back>取消</a></div></div></div></form></div><div data-role=popup id=popupDialog data-overlay-theme=a data-theme=a data-dismissible=false style=max-width:400px><div data-role=header data-theme=a><h1>警告</h1></div><div role=main class=ui-content><h3 class=ui-title>确定要删除该条件吗？</h3><p>提示:可以通过【添加条件】找回</p><a href=# onclick=deletecondtion() class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back data-transition=flow>确认</a> <a href=# class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back>取消</a></div></div><div data-role=popup id=popupforDeletePram data-overlay-theme=a data-theme=a data-dismissible=false style=max-width:400px><div data-role=header data-theme=a><h1>警告</h1></div><div role=main class=ui-content><h3 class=ui-title>确定要删除该自定义参数吗？</h3><p>警告:删除后无法恢复</p><a href=# onclick=deletecustomParams() class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back data-transition=flow>确认</a> <a href=# class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back>取消</a></div></div><div data-role=popup id=popupforSavePram data-overlay-theme=a data-theme=a data-dismissible=false style=max-width:400px><div data-role=header data-theme=a><h1>警告</h1></div><div role=main class=ui-content><h3 class=ui-title>确定要修改该自定义参数吗？</h3><p>警告:修改后将覆盖原值</p><a href=# onclick=saveEditor() class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back data-transition=flow>确认</a> <a href=# class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-rel=back>取消</a></div></div><div data-role=header><h1></h1><div data-role=controlgroup data-type=horizontal class=ui-btn-right><a href=#popupLogin data-rel=popup data-position-to=window id=userbtn data-transition=pop class="ui-btn ui-btn-icon-left ui-icon-user">登陆</a> <a href=# id=userinfo class=ui-btn></a> <a href=# class="ui-btn ui-btn-icon-left ui-icon-action" onclick=logout()>退出</a></div></div><div role=main class=ui-content><div class="ui-grid-b ui-responsive"><div class=ui-block-a><select id=parameterSetting data-shadow=false onchange=setValues(this.value)><option value=0>参数设定<option value=1>强市参数(系统)<option value=2>弱市参数(系统)</select></div><div class=ui-block-b><a onclick=openeditsavePopup() class="ui-shadow ui-btn ui-btn-icon-left ui-icon-star">编辑预定义参数</a></div><div class=ui-block-c><a href=# onclick=getSearchResult() class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-search">查询</a></div></div><div><h3>查询条件</h3></div><style>label.error{color:red;font-size:16px;font-weight:400;line-height:1.4;margin-top:.5em;width:100%;float:none}</style><script type=text/javascript></script><form id=conditonForm><div id=dayparam_con name=dayparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">日均参:x日均线连续?日，?%，均线向上或向下</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:5日均线连续8日，60%，均线向上(5,8,60,1)向下用-1表示如(5,8,60,-1)</div></div><div class=ui-block-d><label for=dayk class=ui-hidden-accessible></label><input name=dayk_condition_text id=dayk data-clear-btn=true></div></div><div id=weekparam_con name=weekparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">周均参:x周均线连续?周，?%，均线向上或向下</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:5周均线连续8周，60%，均线向上(5,8,60,1)向下用-1表示如(5,8,60,-1)</div></div><div class=ui-block-d><label for=weekk class=ui-hidden-accessible></label><input data-clear-btn=true name=weekk_condition_text id=weekk></div></div><div id=kxdparam_con name=kxdparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">日K形态:x1日前开盘价格x2日前收盘价格组成K线，向上或向下穿过?,?,?日均线</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当日K线,向上穿过5,10,20日均线:(0,0,1,5,10,20)</div></div><div class=ui-block-d><label for=onlykd class=ui-hidden-accessible></label><input name=onlykd_condition_text id=onlykd data-clear-btn=true></div></div><div id=kxwparam_con name=kxwparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">周K形态:x1周前开盘价格x2周前收盘价格组成K线，向上或向下穿过?,?,?周均线</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当周K线,向下穿过5,10,20周均线:(0,0,-1,5,10,20)</div></div><div class=ui-block-d><label for=onlykw class=ui-hidden-accessible></label><input name=onlykw_condition_text id=onlykw data-clear-btn=true></div></div><div id=ztparam_con name=ztparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">涨停个数:x日内，涨停个数大于y个</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:100日内涨停个数大于10个:(100,10)</div></div><div class=ui-block-d><label for=zt class=ui-hidden-accessible></label><input name=zt_condition_text id=zt data-clear-btn=true></div></div><div id=currentkparam_con name=currentkparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">当日K线:收阳或阴,收盘价不低于x日均线,涨幅大于x1%,小于x2%</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:只查收阳,收盘价不低于5日均线,涨幅大于-5%,小于5%:(1,-1,5,-5,5)</div></div><div class=ui-block-d><label for=currentk class=ui-hidden-accessible></label><input name=currentk_condition_text id=currentk data-clear-btn=true></div></div><div id=duringkparam_con name=duringkparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">期间K线:x天前起,?天内,最高最低相差?%以上</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:当天算起,30天内,最高最低相差15%以上:(0,30,15)</div></div><div class=ui-block-d><label for=duringk class=ui-hidden-accessible></label><input name=duringk_condition_text id=duringk data-clear-btn=true></div></div><div id=bankuaiparam_con name=bankuaiparam class="ui-grid-c ui-responsive"><div class="ui-block-a ui-alt-icon"><a href=#popupDialog onclick=setObjectbeforedelete(this) data-rel=popup data-position-to=window data-transition=pop class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">删除条件</a></div><div class=ui-block-b><div class="ui-body ui-body-d">板块:选择特定开头的,不填代表全查询</div></div><div class=ui-block-c><div class="ui-body ui-body-d">例:选择00,30开头的股票:(00,30)</div></div><div class=ui-block-d><label for=bankuai class=ui-hidden-accessible></label><input data-options={&quot;type&quot;:&quot;horizontal&quot;} name=bankuai_condition_text id=bankuai data-role=spinbox data-clear-btn=true></div></div></form><div id=addcondition class="ui-grid-c ui-responsive"><div class=ui-block-a><a href=#condtionpanel class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus">添加条件</a></div></div><div><h3>查询结果</h3></div><div class="ui-grid-solo ui-responsive"><span id=msgzone></span><form><input id=filterTable-input data-type=search></form><table data-role=table id=table-custom-2 data-mode=columntoggle class="ui-body-d ui-shadow table-stripe ui-responsive" data-column-btn-theme=a data-column-btn-text=选择显示列... data-column-popup-theme=a data-filter=true data-input=#filterTable-input><thead><tr class=ui-bar-d><th data-priority=1>股票代码<th data-priority=2>股票名称<th class=sortable data-priority=3 datatype=float><abbr>最近净资产收益率(%)</abbr><th class=sortable data-priority=4 datatype=int><abbr>涨停个数</abbr><th class=sortable data-priority=5 datatype=float><abbr>流通股本(万股)</abbr><th class=sortable data-priority=6 datatype=float><abbr>流通股东持股比例(%)</abbr><th data-priority=7>数据更新日期<tbody id=dataResult></table></div></div><div data-role=footer><h5>欢迎咨询:kksogu@gmail.com</h5></div></div>
+<%@taglib prefix="s" uri="/struts-tags"%>
+<html >
+<head>
+<meta http-equiv="Content-Type" content="text/html charset=utf-8">
+<meta
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"
+	name="viewport" />
+	<meta name="keywords" content="kk, KK, 搜股, 股票, 问股, 快快, 寻股, 找股, 技术, 形态, k线, K线, 推荐股票, 荐股">
+	<link rel="shortcut icon" href="images/logo.png">
+<title>KK搜股</title>
+<link
+	href="${pageContext.request.contextPath}/css/mytheme.css"
+	type="text/css" rel="stylesheet">
+	<link
+	href="${pageContext.request.contextPath}/css/jquery.mobile.icons-1.4.2.min.css"
+	type="text/css" rel="stylesheet">
+	<link
+	href="${pageContext.request.contextPath}/css/jquery.mobile.structure-1.4.2c.min.css"
+	type="text/css" rel="stylesheet">
+	
+<link href="${pageContext.request.contextPath}/css/custom.css"
+	type="text/css" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery.validate.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/js/jquery.mobile-1.4.2.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/myjs.min.js"></script>
+
+
+
+</head>
+
+<body>
+	<div id="validator" data-role="page">
+		<!-- /panel -->
+		<jsp:include page="./innerpage/panel/conditionchose_panel.jsp"></jsp:include>
+		<jsp:include page="./innerpage/panel/editordeleteparams_panel.jsp"></jsp:include>
+		<!-- /panel -->
+		<!-- /popup -->
+		<jsp:include page="./innerpage/pop/login_pop.jsp"></jsp:include>
+		<jsp:include page="./innerpage/pop/saveOreditOtionConfirm_pop.jsp"></jsp:include>
+		<jsp:include page="./innerpage/pop/deleteComfirm_pop.jsp"></jsp:include>
+		<jsp:include page="./innerpage/pop/deleteconfirmprameditor_pop.jsp"></jsp:include>
+		<jsp:include page="./innerpage/pop/saveconfirmprameditor_pop.jsp"></jsp:include>
+		<!-- /popup -->
+
+		<div data-role="header">
+			
+			<h1></h1>
+
+			<div data-role="controlgroup" data-type="horizontal"
+				class=" ui-btn-right">
+				<a href="#popupLogin" data-rel="popup" data-position-to="window" id="userbtn"
+					data-transition="pop" class="ui-btn ui-btn-icon-left ui-icon-user">登陆</a>
+				
+				<a href="#" id="userinfo"
+					 class="ui-btn"></a>
+				<a href="#" class="ui-btn ui-btn-icon-left ui-icon-action" onclick="logout()">退出</a>
+			</div>
+		</div>
+		<!-- /header -->
+		<div role="main" class="ui-content">
+
+			<div class="ui-grid-b ui-responsive">
+				<div class="ui-block-a">
+					
+					<select id="parameterSetting"  data-shadow="false" onchange="setValues(this.value)">
+						<option value="0">参数设定</option>
+						<option value="1">强市参数(系统)</option>
+						<option value="2">弱市参数(系统)</option>
+					</select>
+				</div>
+				<div class="ui-block-b">
+				<a  onclick="openeditsavePopup()"
+					class="ui-shadow ui-btn ui-btn-icon-left ui-icon-star">编辑预定义参数</a>
+				</div>
+				<div class="ui-block-c">
+					<a href="#"
+						onclick="getSearchResult();"
+						class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left  ui-icon-search">
+						查询 </a>
+				</div>
+			</div>
+
+			<div>
+				<h3>查询条件</h3>
+			</div>
+			
+			<jsp:include page="./innerpage/conditiongrid.jsp"></jsp:include>
+			<div id="addcondition" class="ui-grid-c ui-responsive">
+				<div class="ui-block-a">
+					<a href="#condtionpanel"
+						class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus">
+						添加条件 </a>
+				</div>
+			</div>
+			<div>
+				<h3>查询结果</h3>
+			</div>
+			<div class="ui-grid-solo ui-responsive">
+				<jsp:include page="./innerpage/searchResult.jsp"></jsp:include>
+			</div>
+
+		</div>
+		<!-- /content -->
+		<div data-role="footer">
+			<h5>欢迎咨询:kksogu@gmail.com</h5>
+		</div>
+		<!-- /footer -->
+	</div>
+	<!-- /page -->
+
+</body>
+</html>

@@ -5,11 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 
-import stock.mmgridcommunicator.HazelCommunicator;
 import common.answer.bean.dto.Datastorage;
 import common.answer.bean.dto.Datastoragec;
 
-public class HazelcastThr extends Thread implements ThreadIf {
+public class HazelcastThr extends Thread {
 
 	private List<String> stocklist;
 
@@ -54,30 +53,18 @@ public class HazelcastThr extends Thread implements ThreadIf {
 
 		mpcnt.put(i, "");
 	}
-
-	public synchronized void setResultList(List<String> ls, String stock_cd) {
-		ls.add(stock_cd);
-	}
-
-	@Override
-	public void setData(List<String> stocklist, int[] paramsint,
-			List<String> resultlstAfterSearch, Map<?, ?> distributedMap,
-			Map<Integer, String> mpcnt, int i, Map<?, ?> otherinfo) {
+	
+	public void setData(List<String> stocklist, Map<?, ?> distributedMap,Map<String, Object> datacopy,
+			Map<Integer, String> mpcnt, int i) {
 
 		this.stocklist = stocklist;
 
 		this.mpcnt = mpcnt;
-		this.distributedMap = HazelCommunicator.map_remote;
+		this.distributedMap = distributedMap;
 		this.i = i;
-		this.datacopy = HazelCommunicator.datacopy;
+		this.datacopy = datacopy;
 	}
 
-	@Override
-	public void setData(List<String> stocklist, int[] paramsint,
-			Map<String, String> resultMpAfterSearch, Map<?, ?> distributedMap,
-			Map<Integer, String> mpcnt, int i, Map<?, ?> otherinfo) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }
