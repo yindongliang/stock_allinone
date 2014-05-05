@@ -4,7 +4,7 @@ var users = [];
 var current_telno;
 function inituserdata_tel() {
 	var u = {};
-	var t = {}
+	var t = {};
 
 	t["data"] = {};
 	t["counter"] = 2;// key for saved parameters
@@ -79,7 +79,7 @@ function getSearchResult() {
 		url : posturl,
 		async : false
 	});
-	var str = htmlobj.responseText
+	//var str = htmlobj.responseText;
 
 	$("#table-custom-2").table("refresh");
 	$("#dataResult").html(htmlobj.responseText);
@@ -475,7 +475,7 @@ function setOptions(c) {
 			jQuery("<option value='" + key + "'>" + value + "</option>")
 					.appendTo("#customprams");
 		});
-		choosefirstOptionOfselectbox("#customprams")
+		choosefirstOptionOfselectbox("#customprams");
 		choosefirstOptionOfselectbox("#parameterSetting");
 	} else {
 		$.each(userdata_tel.userlistname, function(key, value) {
@@ -551,7 +551,7 @@ function deletecondtion() {
 
 $(function() {
 	tableSort($('#table-custom-2'));
-})
+});
 
 function tableSort(jqTableObj) {
 	jqTableObj.find('thead .sortable').click(
@@ -565,13 +565,13 @@ function tableSort(jqTableObj) {
 		var row = tableObj.find('tbody tr');
 
 		$.each(row, function(i) {
-			arr[i] = row[i]
+			arr[i] = row[i];
 		});
 
 		if ($(this).hasClass('current')&&!dataResearchedFlg) {
 			arr.reverse();
 		} else {
-			arr.sort(Utils.sortStr(index, dataType))
+			arr.sort(Utils.sortStr(index, dataType));
 
 			tableObj.find('thead th').removeClass('current');
 			$(this).addClass('current');
@@ -604,21 +604,21 @@ function tableSort(jqTableObj) {
 
 					return aText > bText ? -1 : bText > aText ? 1 : 0;
 				} else {
-					return aText.localeCompare(bText)
+					return aText.localeCompare(bText);
 				}
-			}
+			};
 		}
 
 		function parseNonText(data, dataType) {
 			switch (dataType) {
 			case 'int':
-				return parseInt(data) || 0
+				return parseInt(data) || 0;
 			case 'float':
-				return parseFloat(data) || 0
+				return parseFloat(data) || 0;
 			default:
-				return filterStr(data)
+				return filterStr(data);
 			}
-		}
+		};
 
 		// 过滤中文字符和$
 		function filterStr(data) {
@@ -1114,12 +1114,12 @@ $(document).ready(
 					      return false;
 					   }
 					});
-			/*$('html').bind('contextmenu', function(e)
+			$(document).bind('contextmenu', function(e)
 					{
 					   
 					      return false;
 					   
-					});*/
+					});
 		}
 
 );
