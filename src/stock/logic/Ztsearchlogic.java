@@ -16,9 +16,11 @@ public class Ztsearchlogic {
 			Integer fullup = ds.getMpfullupmp().get(paramsint[0] + "" + paramsint[1]);
 			int zt = 0;
 			if (fullup == null) {
-
-				
-				for (int f = 0; f < paramsint[0]; f++) {
+				int length=paramsint[0];
+				if(ds.getAlldatalist().size()<paramsint[0]){
+					length=ds.getAlldatalist().size();
+				}
+				for (int f = 0; f < length; f++) {
 					if (ds.getAlldatalist().get(f).getPresent_price()
 							.doubleValue() > 1.095 * ds.getAlldatalist().get(f)
 							.getYt_close_price().doubleValue()) {
