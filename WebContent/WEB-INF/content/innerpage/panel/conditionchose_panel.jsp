@@ -48,7 +48,7 @@
 			<div class="ui-body ui-body-d">日K形态:x1日前开盘价格x2日前收盘价格组成K线，向上或向下穿过?,?,?日均线</div>
 		</div>
 		<div class="ui-block-c">
-			<div class="ui-body ui-body-d">例:当日K线,向上穿过5,10,20日均线:(0,0,5,10,20)</div>
+			<div class="ui-body ui-body-d">例:当日K线,向上穿过5,10,20日均线:(0,0,1,5,10,20)</div>
 		</div>
 
 	</div>
@@ -63,7 +63,7 @@
 			<div class="ui-body ui-body-d">周K形态:x1周前开盘价格x2周前收盘价格组成K线，向上或向下穿过?,?,?周均线</div>
 		</div>
 		<div class="ui-block-c">
-			<div class="ui-body ui-body-d">例:当周K线,向上穿过5,10,20周均线:(0,0,5,10,20)</div>
+			<div class="ui-body ui-body-d">例:当周K线,向上穿过5,10,20周均线:(0,0,1,5,10,20)</div>
 		</div>
 
 	</div>

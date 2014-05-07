@@ -79,15 +79,16 @@ function getSearchResult() {
 		url : posturl,
 		async : false
 	});
-	//var str = htmlobj.responseText;
+	var str = htmlobj.responseText;
 
 	$("#table-custom-2").table("refresh");
-	$("#dataResult").html(htmlobj.responseText);
+	$("#dataResult").html(str);
 	$("#table-custom-2").table("refresh");
-
-	$("#msgzone").html($("#resultmsg").html());
-	$("#resultmsg").remove();
-
+	if(str.indexOf("tr")>=0){
+		$("#msgzone").html($("#resultmsg td").html());
+		$("#resultmsg").remove();
+	}
+	
 	dataResearchedFlg=true;
 
 }

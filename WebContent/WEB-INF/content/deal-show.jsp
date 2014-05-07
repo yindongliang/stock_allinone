@@ -1,17 +1,19 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@taglib prefix="s" uri="/struts-tags"%>
-<span id="resultmsg">
-查询结果共<s:property value="datasize" />
+<tr id="resultmsg">
+	<td colspan="7">
+	查询结果共<s:property value="datasize" />
 	<s:if test="datasize>50">
 	,显示前50条。
 	</s:if>
 	<s:if test="datasize<=50">
 	条。
 	</s:if>
-</span>
+	</td>
+</tr>
 <s:iterator value="mapdata" id="column">
 	<tr>
-		<th><s:property value="key" /></th>
+		<td><s:property value="key" /></td>
 		<td><s:property value="value.ften.stock_name" /></td>
 		<td><s:property value="value.ften.jingzcbenifitrate" /></td>
 		<td><s:if test="ztkey!=''">

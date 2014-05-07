@@ -9,6 +9,7 @@
 	name="viewport" />
 	<meta name="keywords" content="kk, KK, 搜股, 股票, 问股, 快快, 寻股, 找股, 技术, 形态, k线, K线, 推荐股票, 荐股">
 	<link rel="shortcut icon" href="images/logo.png">
+	
 <title>KK搜股</title>
 <link
 	href="${pageContext.request.contextPath}/css/mytheme.css"
@@ -27,11 +28,7 @@
 <script
 	src="${pageContext.request.contextPath}/js/jquery.mobile-1.4.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/myjs.min.js"></script>
-
-
-
 </head>
-
 <body>
 	<div id="validator" data-role="page">
 		<!-- /panel -->
@@ -45,11 +42,8 @@
 		<jsp:include page="./innerpage/pop/deleteconfirmprameditor_pop.jsp"></jsp:include>
 		<jsp:include page="./innerpage/pop/saveconfirmprameditor_pop.jsp"></jsp:include>
 		<!-- /popup -->
-
 		<div data-role="header">
-			
 			<h1></h1>
-
 			<div data-role="controlgroup" data-type="horizontal"
 				class=" ui-btn-right">
 				<a href="#popupLogin" data-rel="popup" data-position-to="window" id="userbtn"
@@ -62,10 +56,8 @@
 		</div>
 		<!-- /header -->
 		<div role="main" class="ui-content">
-
 			<div class="ui-grid-b ui-responsive">
 				<div class="ui-block-a">
-					
 					<select id="parameterSetting"  data-shadow="false" onchange="setValues(this.value)">
 						<option value="0">参数设定</option>
 						<option value="1">强市参数(系统)</option>
@@ -83,11 +75,9 @@
 						查询 </a>
 				</div>
 			</div>
-
 			<div>
 				<h3>查询条件</h3>
 			</div>
-			
 			<jsp:include page="./innerpage/conditiongrid.jsp"></jsp:include>
 			<div id="addcondition" class="ui-grid-c ui-responsive">
 				<div class="ui-block-a">

@@ -45,6 +45,7 @@ public class HazelCommunicator {
 					if (datacopy.isEmpty()) {
 						try {
 							sychdataFromHazel(mmaddress, threadcount);
+							sleep(5 * 60 * 1000);
 							continue;
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
